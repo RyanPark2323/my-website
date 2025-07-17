@@ -1,23 +1,27 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import Navigation from './components/Navigation';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import ProjectsPage from './pages/ProjectsPage';
 import './App.css';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const navigateTo = (page) => {
+    setCurrentPage(page);
+    setIsMenuOpen(false);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navigation isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} navigateTo={navigateTo} />
+      
+      {currentPage === 'home' && <HomePage navigateTo={navigateTo} />}
+      {currentPage === 'about' && <AboutPage />}
+      {currentPage === 'projects' && <ProjectsPage />}
     </div>
   );
 }
