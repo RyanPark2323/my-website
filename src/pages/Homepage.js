@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { projectsData } from '../data/projectsData';
+import { timelineData } from '../data/timelineData';
 
 const HomePage = () => {
   const [input, setInput] = useState('');
@@ -9,7 +10,6 @@ const HomePage = () => {
   const historyRef = useRef(null);
   const inputRef = useRef(null);
 
-  // ASCII header that stays permanent
   const asciiHeader = `
  ____                     ____            _    
 |  _ \\ _   _  __ _ _ __  |  _ \\ __ _ _ __| | __
@@ -20,7 +20,6 @@ const HomePage = () => {
       `;
 
   useEffect(() => {
-    // Initial welcome message (no ASCII header here)
     const welcomeMessage = [
       { type: 'output', content: 'Welcome to Ryan Park\'s Portfolio v2.0' },
       { type: 'output', content: 'Type \'help\' for available commands.' },
@@ -46,36 +45,43 @@ const HomePage = () => {
   const commands = {
     help: () => [
       { type: 'output', content: `Available commands:
-  about          - Learn about me
-  skills         - View my technical skills
-  projects       - Browse my projects
-  project <num>  - View specific project details
-  experience     - Show work/education timeline
-  exp <num>      - View specific experience details
-  contact        - Get in touch
-  resume         - Download my resume
-  clear          - Clear terminal
-  matrix         - Toggle matrix rain effect
-  ls             - List available sections
-  pwd            - Show current directory
-  date           - Display current date/time
-  echo <text>    - Echo text back` }
+        about          - Learn about me
+        skills         - View my technical skills
+        projects       - Browse my projects
+        project <num>  - View specific project details
+        experience     - Show work/education timeline
+        exp <num>      - View specific experience details
+        contact        - Get in touch
+        resume         - Download my resume
+        clear          - Clear terminal
+        matrix         - Toggle matrix rain effect
+        pwd            - Show current directory
+        date           - Display current date/time
+        echo <text>    - Echo text back
+
+        Use help and clear to navigate, even if used already` 
+      }
     ],
 
     about: () => [
       { type: 'output', content: `
 ┌─ ABOUT ME ─────────────────────────────────────┐
-│ Name:     Ryan Park                            │
-│ Role:     Computer Science Student             │
-│ Focus:    AI, Cybersecurity, Web Development   │
-│ Location: Salt Lake City, Utah                 │
+│ Name:       Ryan Park                          │
+│ Role:       Computer Science Student           │
+│ Focus:      AI, Cybersecurity, Web Development │
+│ Location:   Salt Lake City, Utah               │
 │                                                │
-│ I'm passionate about building innovative       │
-│ solutions at the intersection of AI and        │
-│ security. Currently pursuing my BS in CS       │
-│ at the University of Utah.                     │
+│ I'm passionate about innovative soulutions     │
+│ at the intersection of cybersecurity and       │
+│ next-gen tech like AI and Quantum Computing.   │
 │                                                │
-│ When not coding, you'll find me:               │
+│ I am currently pursuing my BS in CS with an    │
+│ emphasis in AI at the University of Utah,      │
+│ expected to graduate in Spring 2026. I also    │
+│ work as an IT support intern for the VPR at    │
+│ the U of U.                                    │
+│                                                │
+│ When not working or learning, you'll find me:  │
 │ - Solving CTF challenges                       │
 │ - At the gym                                   │
 │ - Reading sci-fi (currently: Dune series)      │
@@ -84,33 +90,38 @@ const HomePage = () => {
 
     skills: () => [
       { type: 'output', content: `
-┌─ TECHNICAL SKILLS ──────────────────────────────┐
-│                                                 │
-│ Languages                                       │
-│ ─────────                                       │
-│ Python • JavaScript • C++ • Java • C# • SQL     │
-│                                                 │
-│ Web Development                                 │
-│ ───────────────                                 │
-│ React • Node.js • HTML/CSS • Tailwind CSS      │
-│ REST APIs • Express • MongoDB                   │
-│                                                 │
-│ Tools & Technologies                            │
-│ ────────────────────                            │
-│ Git • Docker • Linux • VS Code • Agile         │
-│ Qt Creator • .NET • Entity Framework            │
-│                                                 │
-│ AI & Machine Learning                           │
-│ ─────────────────────                           │
-│ TensorFlow • Neural Networks • Data Analysis    │
-│ Machine Learning Algorithms                     │
-│                                                 │
-│ Cybersecurity                                   │
-│ ─────────────                                   │
-│ Penetration Testing • CTF Challenges            │
-│ Network Security • Cryptography                 │
-│                                                 │
-└─────────────────────────────────────────────────┘` }
+┌─ TECHNICAL SKILLS ────────────────────────────────┐
+│                                                   │
+│ Languages                                         │
+│ ─────────                                         │
+│ Python • Java • JavaScript • Typescript • C++     │
+│ C# • Java • SQL                                   │
+│                                                   │
+│ Web Development                                   │
+│ ───────────────                                   │
+│ React • Node.js • HTML/CSS • Tailwind CSS         │
+│ REST APIs • SupaBase • Vercel • Expo              │
+│                                                   │
+│ Tools & Technologies                              │
+│ ────────────────────                              │
+│ Git • Docker • Linux • VS Code • AI Tools         │
+│ Qt Creator • .NET                                 │
+│                                                   │
+│ AI & Machine Learning                             │
+│ ─────────────────────                             │
+│ TensorFlow • Neural Networks • Data Analysis      │
+│ Machine Learning Algorithms                       │
+│                                                   │
+│ Cybersecurity                                     │
+│ ─────────────                                     │
+│ Penetration Testing • CTF Challenges              │
+│ Network Security • Cryptography                   │
+│                                                   │
+│ IT                                                │
+│ ─────────────────────                             │
+│ Qualys • Server Maintence • SOP • Intune          │
+│ Endpoint Management                               │
+└───────────────────────────────────────────────────┘` }
     ],
 
     projects: () => {
@@ -128,30 +139,36 @@ const HomePage = () => {
       { type: 'output', content: `
 ┌─ EXPERIENCE LOG ────────────────────────────────┐
 │                                                 │
-│ $ git log --oneline --graph --all              │
+│ $ git log --oneline --graph --all               │
 │                                                 │
-│ * 1. [2026]     B.S. Computer Science          │
+│ * 1. [2026]     B.S. Computer Science           │
 │ |               University of Utah              │
 │ |                                               │
-│ * 2. [2024]     Dean's List                    │
+│ * 2. [2025]     Hinckley Leadership Scholar     │
+│ |               University of Utah              │
+│ |                                               │
+│ * 3. [2024]     Dean's List                     │
 │ |               Spring 2024                     │
 │ |                                               │
-│ * 3. [2023-24]  STEM Tutor                     │
+│ * 4. [2023-24]  STEM Tutor                      │
 │ |               U of U REFUGEES Program         │
 │ |                                               │
-│ * 4. [2023]     Intro to CS Teacher            │
+│ * 5. [2023]     Intro to CS Teacher             │
 │ |               Local High School               │
 │ |                                               │
-│ * 5. [2022]     Started University of Utah     │
+│ * 6. [2022]     Started University of Utah      │
 │ |               Presidential Scholar            │
 │ |                                               │
-│ * 6. [2022]     Associates Degree              │
+│ * 7. [2026]     Graduated High School           │
+│ |               Boneville High School           │
+│ |                                               │
+│ * 8. [2022]     Associates Degree               │
 │ |               Weber State University          │
 │ |                                               │
-│ * 7. [2021]     State Debate Champion          │
+│ * 9. [2021]     State Debate Champion           │
 │ |               Public Forum Debate             │
 │ |                                               │
-│ * 8. [2004]     System Initialization          │
+│ * 10. [2004]    System Initialization           │
 │                 Born in Murray, Utah            │
 │                                                 │
 │ Use 'exp <number>' for details                  │
@@ -160,16 +177,14 @@ const HomePage = () => {
 
     contact: () => [
       { type: 'output', content: `
-┌─ CONTACT ───────────────────────────────────────┐
-│                                                 │
-│ 📧 Email:    ryan.park2322@gmail.com           │
-│ 📱 Phone:    (385) 347-1636                    │
-│ 💼 LinkedIn: linkedin.com/in/ryan-park23       │
-│ 🐙 GitHub:   github.com/ryanpark               │
-│                                                 │
-│ Preferred method: Email                         │
-│ Response time: Within 24 hours                  │
-└─────────────────────────────────────────────────┘` }
+┌─ CONTACT ────────────────────────────────────┐
+│                                              │
+│ Email:      ryan.park2322@gmail.com          │
+│ LinkedIn:   linkedin.com/in/ryan-park23      │
+│ GitHub:     https://github.com/RyanPark2323  │
+│                                              │
+│ Preferred method: Email                      │
+└──────────────────────────────────────────────┘` }
     ],
 
     resume: () => {
@@ -247,8 +262,6 @@ const HomePage = () => {
         
         return [
           { type: 'output', content: '> MATRIX MODE ACTIVATED' },
-          { type: 'output', content: '> Reality.exe has stopped responding...' },
-          { type: 'output', content: '> Follow the white rabbit 🐇' }
         ];
       } else {
         // Remove matrix effect
@@ -268,7 +281,7 @@ const HomePage = () => {
     },
 
     whoami: () => [
-      { type: 'output', content: 'ryan - Computer Science student at University of Utah' }
+      { type: 'output', content: 'a cool person' }
     ],
 
     ls: () => [
@@ -288,107 +301,10 @@ const HomePage = () => {
     ]
   };
 
-  // Dynamic experience commands
-  const experiences = [
-    {
-      title: "B.S. Computer Science",
-      date: "2026 (Expected)",
-      type: "EDUCATION",
-      description: `Currently pursuing Bachelor of Science in Computer Science at the University of Utah with an emphasis in Artificial Intelligence. Maintaining strong academic performance while engaging in various projects and extracurricular activities.`,
-      highlights: [
-        "AI/ML Emphasis Track",
-        "Expected Graduation: 2026",
-        "Relevant Coursework: Data Structures, Algorithms, Machine Learning, Cybersecurity"
-      ]
-    },
-    {
-      title: "Dean's List",
-      date: "Spring 2024",
-      type: "ACHIEVEMENT",
-      description: `Recognized for outstanding academic performance during the Spring 2024 semester. This achievement reflects consistent dedication to academic excellence while balancing multiple projects and responsibilities.`,
-      highlights: [
-        "Top academic performance",
-        "Recognition for excellence",
-        "Maintained high GPA while working on projects"
-      ]
-    },
-    {
-      title: "STEM Tutor",
-      date: "2023-2024",
-      type: "ROLE",
-      description: `Served as a STEM Tutor for the University of Utah's REFUGEES program, helping refugee children catch up academically and adapt to the U.S. education system. Focused on mathematics, science, and basic computer skills.`,
-      highlights: [
-        "Taught mathematics and science fundamentals",
-        "Helped students overcome language barriers",
-        "Developed culturally sensitive teaching methods",
-        "Improved student performance by average of 30%"
-      ]
-    },
-    {
-      title: "Intro to CS Teacher",
-      date: "2023",
-      type: "ROLE",
-      description: `Taught Introduction to Computer Science as an elective course at a local high school using the Minecraft Education Platform. Made programming concepts accessible and engaging for students with no prior coding experience.`,
-      highlights: [
-        "Designed curriculum using Minecraft Education",
-        "Taught basic programming concepts",
-        "100% student satisfaction rating",
-        "Many students pursued further CS courses"
-      ]
-    },
-    {
-      title: "Started University of Utah",
-      date: "August 2022",
-      type: "MILESTONE",
-      description: `Began my journey at the University of Utah as a Computer Science major. Awarded the Presidential Merit Scholarship for academic excellence and leadership potential.`,
-      highlights: [
-        "Presidential Merit Scholarship recipient",
-        "Declared CS major with AI emphasis",
-        "Joined various tech clubs and organizations"
-      ]
-    },
-    {
-      title: "Associates Degree",
-      date: "May 2022",
-      type: "EDUCATION",
-      description: `Graduated from Weber State University with an Associate of Science in General Studies, achieving a perfect 4.0 GPA. Completed degree while still in high school through concurrent enrollment.`,
-      highlights: [
-        "Perfect 4.0 GPA",
-        "Graduated with High Honors",
-        "Concurrent enrollment while in high school",
-        "Strong foundation in math and sciences"
-      ]
-    },
-    {
-      title: "State Debate Champion",
-      date: "2021",
-      type: "ACHIEVEMENT",
-      description: `Won first place in the Utah State Public Forum Debate Championship. This experience honed critical thinking, public speaking, and argumentation skills that translate directly to technical presentations and team collaboration.`,
-      highlights: [
-        "1st Place - State Championship",
-        "Developed strong communication skills",
-        "Led team to multiple tournament victories",
-        "Skills applicable to technical presentations"
-      ]
-    },
-    {
-      title: "System Initialization",
-      date: "January 1, 2004",
-      type: "INIT",
-      description: `Hello, World! Born in Murray, Utah. Early fascination with technology, starting with taking apart electronics and eventually leading to programming and computer science.`,
-      highlights: [
-        "Native Utahn",
-        "Early interest in technology",
-        "First computer at age 8",
-        "Self-taught basic programming by age 12"
-      ]
-    }
-  ];
-
   // Add individual experience commands
-  for (let i = 1; i <= experiences.length; i++) {
+  for (let i = 1; i <= timelineData.length; i++) {
     commands[`exp ${i}`] = () => {
-      const exp = experiences[i - 1];
+      const exp = timelineData[i - 1];
       const highlights = exp.highlights.map(h => `│ • ${h}`).join('\n');
       return [
         { type: 'output', content: `
@@ -536,7 +452,7 @@ ${project.demoLink ? `│ Demo: ${project.demoLink}\n│` : '│'}
           <div className="terminal-button close"></div>
           <div className="terminal-button minimize"></div>
           <div className="terminal-button maximize"></div>
-          <span className="terminal-title">ryan@portfolio — bash</span>
+          <span className="terminal-title">ryan@portfolio</span>
         </div>
         <div className="terminal-body" ref={historyRef}>
           {/* Permanent ASCII header */}
