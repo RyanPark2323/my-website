@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+/* Terminal Portfolio Styles */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
 
 * {
   margin: 0;
@@ -7,94 +8,318 @@
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
-  line-height: 1.6;
-  color: #333;
+  font-family: 'Fira Code', monospace;
+  overflow: hidden;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.App {
+  width: 100vw;
+  height: 100vh;
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Utility Classes */
-.text-center { text-align: center; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-8 { margin-bottom: 2rem; }
-.mt-8 { margin-top: 2rem; }
-.p-8 { padding: 2rem; }
-.rounded-lg { border-radius: 0.5rem; }
-.shadow-lg { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-
-/* Button Styles */
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.25rem;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-primary {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #45a049;
-}
-
-.btn-outline {
-  background-color: transparent;
-  color: #4CAF50;
-  border: 2px solid #4CAF50;
-}
-
-.btn-outline:hover {
-  background-color: rgba(76, 175, 80, 0.1);
-}
-
-/* Section Styles */
-.section {
-  padding: 5rem 2rem;
-  min-height: 100vh;
+.terminal-container {
+  width: 100vw;
+  height: 100vh;
+  background: #0a0a0a;
+  background-image: 
+    radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 50%),
+    radial-gradient(ellipse at bottom, #0f3460 0%, #0a0a0a 50%);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  cursor: text;
+  position: relative;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+/* Subtle scan line effect */
+.terminal-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 255, 0, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  animation: scan 8s linear infinite;
 }
 
-/* Responsive Grid */
-.grid {
-  display: grid;
-  gap: 2rem;
+@keyframes scan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(10px); }
 }
 
-.grid-cols-1 { grid-template-columns: 1fr; }
-
-@media (min-width: 768px) {
-  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.terminal {
+  width: 100%;
+  max-width: 1200px;
+  height: calc(100vh - 40px);
+  max-height: 900px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 
+    0 0 40px rgba(0, 255, 0, 0.1),
+    0 0 80px rgba(0, 255, 0, 0.05),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-@media (min-width: 1024px) {
-  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.terminal-header {
+  background: #1e1e1e;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.terminal-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: opacity 0.2s;
+}
+
+.terminal-button:hover {
+  opacity: 0.8;
+}
+
+.terminal-button.close {
+  background: #ff5f56;
+}
+
+.terminal-button.minimize {
+  background: #ffbd2e;
+}
+
+.terminal-button.maximize {
+  background: #27c93f;
+}
+
+.terminal-title {
+  margin-left: 10px;
+  color: #888;
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.terminal-body {
+  flex: 1;
+  background: rgba(10, 10, 10, 0.95);
+  padding: 20px;
+  overflow-y: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #00ff00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.terminal-line {
+  margin-bottom: 5px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.terminal-line.command {
+  color: #00ff00;
+}
+
+.terminal-line.output {
+  color: #e0e0e0;
+}
+
+.terminal-line.error {
+  color: #ff6b6b;
+}
+
+.terminal-line.ascii {
+  color: #00ff00;
+  font-size: 12px;
+  line-height: 1.2;
+  text-shadow: 
+    0 0 10px rgba(0, 255, 0, 0.8),
+    0 0 20px rgba(0, 255, 0, 0.4);
+}
+
+.prompt {
+  color: #00ff00;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
+}
+
+.terminal-input {
+  background: none;
+  border: none;
+  color: #00ff00;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  width: calc(100% - 200px);
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.cursor {
+  animation: blink 1s infinite;
+  color: #00ff00;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Scrollbar styling for terminal */
+.terminal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.terminal-body::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border-radius: 5px;
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+  background: #00cc00;
+}
+
+/* Matrix mode effect */
+.matrix-mode::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 0, 0.03) 2px,
+      rgba(0, 255, 0, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.matrix-mode::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(
+      0deg,
+      transparent 0%,
+      rgba(0, 255, 0, 0.02) 50%,
+      transparent 100%
+    );
+  animation: matrix-rain 20s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes matrix-rain {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .terminal-container {
+    padding: 10px;
+  }
+  
+  .terminal {
+    height: calc(100vh - 20px);
+    max-height: none;
+  }
+  
+  .terminal-body {
+    padding: 15px;
+    font-size: 12px;
+  }
+  
+  .terminal-input {
+    width: calc(100% - 140px);
+  }
+  
+  .terminal-line.ascii {
+    font-size: 8px;
+  }
+  
+  .terminal-header {
+    padding: 8px 12px;
+  }
+}
+
+/* Glow effect on focus */
+.terminal:focus-within {
+  box-shadow: 
+    0 0 60px rgba(0, 255, 0, 0.2),
+    0 0 100px rgba(0, 255, 0, 0.1),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Prevent text selection except in input */
+.terminal-container * {
+  user-select: none;
+}
+
+.terminal-input {
+  user-select: text;
+}
+
+/* Command history styling */
+.terminal-line.command .content {
+  color: #00ff00;
+  font-weight: 500;
+}
+
+/* Output styling variations */
+.terminal-line.output .content {
+  color: #d0d0d0;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Error styling */
+.terminal-line.error .content {
+  color: #ff6b6b;
+  text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+}
+
+/* Success messages */
+.terminal-line.success .content {
+  color: #50fa7b;
+  text-shadow: 0 0 5px rgba(80, 250, 123, 0.5);
 }
