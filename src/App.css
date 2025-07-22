@@ -7,6 +7,7 @@
   box-sizing: border-box;
 }
 
+/* Hide any overflow cursors */
 body {
   font-family: 'Fira Code', monospace;
   overflow: hidden;
@@ -15,6 +16,7 @@ body {
 .App {
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 .terminal-container {
@@ -67,6 +69,7 @@ body {
     inset 0 0 20px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   overflow: hidden;
+  position: relative;
 }
 
 .terminal-header {
@@ -115,6 +118,7 @@ body {
   background: rgba(10, 10, 10, 0.95);
   padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
   font-family: 'Fira Code', monospace;
   font-size: 14px;
   line-height: 1.6;
@@ -122,11 +126,44 @@ body {
   text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
 
+.terminal-header-ascii {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.terminal-header-ascii pre {
+  margin: 0;
+  color: #00ff00;
+  font-size: 12px;
+  line-height: 1.2;
+  text-shadow: 
+    0 0 10px rgba(0, 255, 0, 0.8),
+    0 0 20px rgba(0, 255, 0, 0.4);
+}
+
 .terminal-line {
   margin-bottom: 5px;
   white-space: pre-wrap;
   word-wrap: break-word;
   animation: fadeIn 0.3s ease-in;
+}
+
+.terminal-line.command {
+  display: flex;
+  align-items: baseline;
+}
+
+.terminal-line.input-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.terminal-line.output,
+.terminal-line.error,
+.terminal-line.ascii,
+.terminal-line.success {
+  display: block;
 }
 
 @keyframes fadeIn {
@@ -161,6 +198,11 @@ body {
     0 0 20px rgba(0, 255, 0, 0.4);
 }
 
+.input-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
 .prompt {
   color: #00ff00;
   font-weight: bold;
@@ -174,14 +216,16 @@ body {
   font-family: inherit;
   font-size: inherit;
   outline: none;
-  width: calc(100% - 200px);
   text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  width: calc(100% - 200px);
+  caret-color: #00ff00;
 }
 
-.cursor {
-  animation: blink 1s infinite;
+/* Custom caret styling */
+.terminal-input::after {
+  content: '▊';
   color: #00ff00;
-  font-weight: bold;
+  animation: blink 1s infinite;
   text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
 }
 
@@ -190,23 +234,23 @@ body {
   50%, 100% { opacity: 0; }
 }
 
-/* Scrollbar styling for terminal */
-.terminal-body::-webkit-scrollbar {
+/* Scrollbar styling for terminal history */
+.terminal-history::-webkit-scrollbar {
   width: 10px;
 }
 
-.terminal-body::-webkit-scrollbar-track {
+.terminal-history::-webkit-scrollbar-track {
   background: #0a0a0a;
   border-radius: 5px;
 }
 
-.terminal-body::-webkit-scrollbar-thumb {
+.terminal-history::-webkit-scrollbar-thumb {
   background: #00ff00;
   border-radius: 5px;
   box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
 
-.terminal-body::-webkit-scrollbar-thumb:hover {
+.terminal-history::-webkit-scrollbar-thumb:hover {
   background: #00cc00;
 }
 
@@ -271,7 +315,8 @@ body {
   }
   
   .terminal-input {
-    width: calc(100% - 140px);
+    min-width: 0;
+    flex: 1;
   }
   
   .terminal-line.ascii {
@@ -280,6 +325,10 @@ body {
   
   .terminal-header {
     padding: 8px 12px;
+  }
+  
+  .terminal-header-ascii pre {
+    font-size: 8px;
   }
 }
 
