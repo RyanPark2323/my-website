@@ -126,7 +126,7 @@ const HomePage = () => {
 
     projects: () => {
       const projectList = projectsData.map((project, index) => 
-        `  ${index + 1}. ${project.title.padEnd(30)} - ${project.brief}`
+        `  ${index + 1}. ${project.title.padEnd(40)} - ${project.brief}`
       ).join('\n');
 
       return [
@@ -180,8 +180,8 @@ const HomePage = () => {
 ┌─ CONTACT ────────────────────────────────────┐
 │                                              │
 │ Email:      ryan.park2322@gmail.com          │
-│ LinkedIn:   linkedin.com/in/ryan-park23      │
-│ GitHub:     https://github.com/RyanPark2323  │
+│ LinkedIn:   <a href="https://linkedin.com/in/ryan-park23" target="_blank" style="color: #00ff00; text-decoration: underline;">linkedin.com/in/ryan-park23</a>      │
+│ GitHub:     <a href="https://github.com/RyanPark2323" target="_blank" style="color: #00ff00; text-decoration: underline;">github.com/RyanPark2323</a>          │
 │                                              │
 │ Preferred method: Email                      │
 └──────────────────────────────────────────────┘` }
@@ -190,7 +190,7 @@ const HomePage = () => {
     resume: () => {
       // Create a temporary link element to trigger download
       const link = document.createElement('a');
-      link.href = '/assets/Resume - Base (WEB).docx.pdf';
+      link.href = '/assets/Ryan Park - Resume.pdf';
       link.download = 'Ryan_Park_Resume.pdf';
       link.target = '_blank';
       document.body.appendChild(link);
@@ -302,52 +302,463 @@ const HomePage = () => {
   };
 
   // Add individual experience commands
-  for (let i = 1; i <= timelineData.length; i++) {
-    commands[`exp ${i}`] = () => {
-      const exp = timelineData[i - 1];
-      const highlights = exp.highlights.map(h => `│ • ${h}`).join('\n');
-      return [
-        { type: 'output', content: `
-┌─ ${exp.title.toUpperCase()} ─────────────────────────────────┐
-│ Type: ${exp.type}
-│ Date: ${exp.date}
-│                                                 
-│ Description:                                    
-│ ${exp.description.match(/.{1,45}/g).join('\n│ ')}
-│                                                 
-│ Key Highlights:                                 
-${highlights}
-│                                                 
-│ $ cd /experience/${exp.title.toLowerCase().replace(/\s+/g, '-')}
-└─────────────────────────────────────────────────┘` }
-      ];
-    };
-  }
+  commands['exp 1'] = () => [
+  { type: 'output', content: `
+┌─ B.S. COMPUTER SCIENCE ─────────────────────────────┐
+│ Date:       2026 (Expected)                         │
+│ Location:   Salt Lake City                          │
+│                                                     │
+│ Description:                                        │
+│ Currently pursuing Bachelor of Science in Computer  │
+│ Science at the University of Utah with an emphasis  │
+│ in Artificial Intelligence. Maintaining strong      │
+│ academic performance while engaging in various      │
+│ projects and extracurricular activities.            │
+│                                                     │
+│ Key Highlights:                                     │
+│ • AI/ML Emphasis Track                              │
+│ • Expected Graduation: Spring 2026                  │
+│ • Relevant Coursework: Data Structures,             │
+│   Algorithms, Machine Learning, Cybersecurity       │
+└─────────────────────────────────────────────────────┘` }
+];
+commands['exp 2'] = () => [
+  { type: 'output', content: `
+┌─ Hinckley Leadership Scholar ───────────────────────┐
+│ Date:       2025                                    │
+│ Location:   Salt Lake City                          │
+│                                                     │
+│ Description:                                        │
+│ Selected for the Hinckley Leadership Scholarship    │
+│ which helps students with their ongoing commitment  │
+│ to active citizenship and public service.           │
+│                                                     │
+│ Key Highlights:                                     │
+│ • Community Support and Leadership                  │
+│ • Academic and Community Excellence                 │
+│                                                     │
+└─────────────────────────────────────────────────────┘` }
+];
+commands['exp 3'] = () => [
+  { type: 'output', content: `
+┌─ Dean's List ───────────────────────────────────────┐
+│ Date:       2024                                    │
+│ Location:   Salt Lake City                          │
+│                                                     │
+│ Description:                                        │
+│ Recognized for outstanding academic performance     │
+│ during the Spring 2024 semester. This achievement   │
+│ reflects consistent dedication to academic          │
+│ excellence while balancing multiple projects and    │
+│ responsibilities.                                   │
+│                                                     │
+│ Key Highlights:                                     │
+│ • Excellent Academic Performance                    │
+│ • Maintenence of GPA while working on side projects │
+└─────────────────────────────────────────────────────┘`}
+];
+commands['exp 4'] = () => [
+  { type: 'output', content: `
+┌─ STEM Tutor ────────────────────────────────────────┐
+│ Date:       2023 - 2024                             │
+│ Location:   Salt Lake City                          │
+│                                                     │
+│ Description:                                        │
+│ Served as a STEM Tutor for the University of Utah's │
+│ REFUGEES program, helping refugee children catch up │
+│ academically and adapt to the U.S. education system.│
+│ Focused on mathematics, science, and basic computer │
+│ skills.                                             │
+│                                                     │
+│ Key Highlights:                                     │
+│ • Worked with Refugee Children to give them the     │
+│   best academic experience possible                 │
+│ • Tutored in CS, Math, and Science                  │
+│ • Raised Class Average GPA by 0.2 points            │
+└─────────────────────────────────────────────────────┘`}
+];
+commands['exp 5'] = () => [
+  { type: 'output', content: `
+┌─ Intro to CS Teacher ───────────────────────────────┐
+│ Date:       2023                                    │
+│ Location:   Salt Lake City                          │
+│                                                     │
+│ Description:                                        │
+│ Taught Introduction to Computer Science as an       │
+│ elective course at the Salt Lake Center for Science │
+│ Education using the Minecraft Education Platform.   │
+│ Made programming concepts accessible and engaging   │
+│ for students with no prior coding experience.       │
+│                                                     │
+│ Key Highlights:                                     │
+│ • Designed curriculum using Minecraft Education     │
+│ • Taught basic programming concepts                 │
+│ • 8 students obtained their official programming    │
+│   certification                                     │
+└─────────────────────────────────────────────────────┘`}
+];
+commands['exp 6'] = () => [
+  { type: 'output', content: `
+┌─ Started CS Degree at the University of Utah ───────┐
+│ Date:       2022                                    │
+│ Location:   Salt Lake City                          │
+│                                                     │
+│ Description:                                        │
+│ Began my journey at the University of Utah as a     │
+│ Computer Science major. Awarded the Presidential    │
+│ Merit Scholarship for academic excellence and       │
+│ leadership potential.                               │
+│                                                     │
+│ Key Highlights:                                     │
+│ • AI/ML Emphasis Track                              │
+│ • Presidential Scholarship Recipient                │
+│ • Joined the Chess Club                             │
+└─────────────────────────────────────────────────────┘` }
+];
+commands['exp 7'] = () => [
+  { type: 'output', content: `
+┌─ Graduated From High School ────────────────────────┐
+│ Date:       2022                                    │
+│ Location:   Washington Terrace, U                   │
+│                                                     │
+│ Description:                                        │
+│ Graduated from Bonneville High School with a 3.95   │
+│ GPA. Founded the Bonneville High School Chess Club. │
+│ Was a 3 sport varsity athlete in football, track,   │
+│ and wrestling. I also received the Academic         │
+│ All-State award for academic excellence. Was the    │
+│ 2021 Utah Public Forum Debate State Champion and a  │
+│ National Qualifier for the National HOSA            │
+│ competition in Biomedical Debate.                   │
+│                                                     │
+│ Key Highlights:                                     │
+│ • 3 Sport Varsity Athlete                           │
+│ • Academic All State                                │
+│ • 2022 Utah Debate Champion                         │
+│ • Founder of the Bonneville Highschool Chess Club   │
+└─────────────────────────────────────────────────────┘` }
+];
+commands['exp 8'] = () => [
+  { type: 'output', content: `
+┌─ Associates of Science in General Studies with High Honors─┐
+│ Date:       2022                                           │
+│ Location:   Ogden, UT                                      │
+│                                                            │
+│ Description:                                               │
+│ Graduated from Weber State University with an Associate of │
+│ Science in General Studies, achieving a perfect 4.0 GPA.   │
+│ Completed degree while still in high school through        │
+│ concurrent enrollment.                                     │
+│                                                            │
+│ Key Highlights:                                            │
+│ • Graduated with a 4.0 and High Honors                     │
+│ • Emphasis in STEM and CS fundamentals and principles      │
+└────────────────────────────────────────────────────────────┘` }
+];
+commands['exp 9'] = () => [
+  { type: 'output', content: `
+┌─ State Debate Champion ─────────────────────────────┐
+│ Date:       2021                                    │
+│ Location:   Washington Terrace, UT                  │
+│                                                     │
+│ Description:                                        │
+│ Utah 2021 Public Forum State Debate Champion.       │
+│ This experience honed critical thinking, public     │
+│ speaking, and argumentation skills that translate   │
+│ directly to technical presentations and team        │
+│ collaboration.                                      │
+│                                                     │
+│ Key Highlights:                                     │
+│ • Debate Champion                                   │
+│ • Development of strong communication skills        │
+└─────────────────────────────────────────────────────┘` }
+];
+commands['exp 10'] = () => [
+  { type: 'output', content: `
+┌─ The Day I was Born ────────────────────────────────┐
+│ Date:       Jan 2, 2004                             │
+│ Location:   Murray, UT                              │
+│                                                     │
+│ Description:                                        │
+│ The day I was born. Easy way to remember my birthday│
+│                                                     │
+│ Key Highlights:                                     │
+│ • I entered the world                               │      
+└─────────────────────────────────────────────────────┘` }
+];
 
-  // Dynamic project commands
-  for (let i = 1; i <= projectsData.length; i++) {
-    commands[`project ${i}`] = () => {
-      const project = projectsData[i - 1];
-      const techStack = project.techStack.join(', ');
-      return [
-        { type: 'output', content: `
-┌─ ${project.title.toUpperCase()} ─────────────────────────────────┐
-│ ${project.brief}
-│                                                 
-│ Tech Stack: ${techStack}
-│ Status: ████████████████████ Complete          
-│                                                 
-│ Description:                                    
-│ ${project.description.match(/.{1,45}/g).join('\n│ ')}
-│                                                 
-${project.demoLink ? `│ Demo: ${project.demoLink}\n│` : '│'}                                                 
-│ $ git clone github.com/ryanpark/${project.title.toLowerCase().replace(/\s+/g, '-')}
-│ $ cd ${project.title.toLowerCase().replace(/\s+/g, '-')}
-│ $ npm start                                     
-└─────────────────────────────────────────────────┘` }
-      ];
-    };
-  }
+// Add individual project commands
+commands['project 1'] = () => [
+  { type: 'output', content: `
+┌─ GIFTHINT ──────────────────────────────────────────┐
+│ ML Gift Recommendation App                          │
+│                                                     │
+│ Role: Founding Engineer and Project Lead            │
+│                                                     │
+│ Description:                                        │
+│ Led the development of a full-stack mobile          │
+│ application using React Native and Node.js.         │
+│ Managed a team of two developers, overseeing        │
+│ project timelines, architecture decisions, and      │
+│ feature implementation. Designed and integrated a   │
+│ machine learning algorithm to deliver personalized  │
+│ gift suggestions, improving user engagement and     │
+│ recommendation accuracy.                            │
+│                                                     │
+│ Key Achievements:                                   │
+│ • Team leadership and project management            │
+│ • ML algorithm for personalized recommendations     │
+│ • End-to-end development and deployment             │
+│                                                     │
+│ Tech Stack:                                         │
+│ • React Native • Node.js • TypeScript               │
+│ • JavaScript • Machine Learning                     │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 2'] = () => [
+  { type: 'output', content: `
+┌─ A BREATH OF FRESH AIR HACKATHON ───────────────────┐
+│ AI managed cap and trade system                     │
+│                                                     │
+│ Role: Developer and Project Lead                    │
+│                                                     │
+│ Description:                                        │
+│ Participated in the A Breath of Fresh Air           │
+│ Hackathon, developing an AI-managed cap-and-trade   │
+│ system to reduce Utah's air pollution by 1%         │
+│ annually. Designed a scalable, data-driven          │
+│ solution that automates emission tracking, credit   │
+│ allocation, and compliance forecasting.             │
+│                                                     │
+│ Key Achievements:                                   │
+│ • Earned Honorable Mention                          │
+│ • Innovative environmental policy approach          │
+│ • Integrated multiple AWS services                  │
+│ • Automated emission tracking system                │
+│                                                     │
+│ Tech Stack:                                         │
+│ • Python • AWS S3 • Snowflake • Bedrock             │
+│ • SageMaker • Machine Learning                      │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 3'] = () => [
+  { type: 'output', content: `
+┌─ PERSONAL WEBSITE ──────────────────────────────────┐
+│ What do you think of it so far?                     │
+│                                                     │
+│ Role: Developer                                     │
+│                                                     │
+│ Description:                                        │
+│ Currently developing a personal website to          │
+│ showcase projects and professional experience.      │
+│ Designed and implemented responsive layouts using   │
+│ a React framework. Focused on cool tech aesthetic   │
+│ with a unique terminal-based interface.             │
+│                                                     │
+│ Key Features:                                       │
+│ • Interactive terminal interface                    │
+│ • Responsive design                                 │
+│ • Project showcase                                  │
+│ • Professional portfolio                            │
+│                                                     │
+│ Tech Stack:                                         │
+│ • HTML • CSS • JavaScript • React                   │
+│ • Web Design • Terminal UI                          │
+│                                                     │
+│ You're looking at it right now!                     │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 4'] = () => [
+  { type: 'output', content: `
+┌─ CAPTURE THE FLAG CHALLENGES ───────────────────────┐
+│ Cybersecurity challenges to obtain flag from        │
+│ systems or code                                     │
+│                                                     │
+│ Role: Security Researcher and CTF Player            │
+│                                                     │
+│ Description:                                        │
+│ Exploring web application security through courses  │
+│ on TryHackMe, information security fundamentals     │
+│ on Hack the Box, and overall CTF knowledge with     │
+│ PicoCTF. Learning foundational concepts in          │
+│ penetration testing, vulnerability analysis, and    │
+│ secure coding practices.                            │
+│                                                     │
+│ Key Skills Developed:                               │
+│ • Web application security                          │
+│ • Penetration testing                               │
+│ • Vulnerability analysis                            │
+│ • Secure coding practices                           │
+│ • Network security fundamentals                     │
+│                                                     │
+│ Platforms:                                          │
+│ • TryHackMe • Hack the Box • PicoCTF                │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 5'] = () => [
+  { type: 'output', content: `
+┌─ EDUCATIONAL GOLF SIMULATOR ────────────────────────┐
+│ Physics-based golf simulator to teach course        │
+│ strategy                                            │
+│                                                     │
+│ Role: Developer                                     │
+│                                                     │
+│ Description:                                        │
+│ Developed a golf course simulator to teach course   │
+│ management strategies like club selection,          │
+│ distance control, terrain navigation, and obstacle  │
+│ avoidance. Implemented physics-based gameplay with  │
+│ Box2D and an interactive design using Qt.           │
+│                                                     │
+│ Key Features:                                       │
+│ • Realistic physics simulation                      │
+│ • Course management teaching tools                  │
+│ • Interactive gameplay                              │
+│ • Agile development methodology                     │
+│                                                     │
+│ Tech Stack:                                         │
+│ • C++ • Qt • Box2D Physics Engine                   │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 6'] = () => [
+  { type: 'output', content: `
+┌─ PISKEL (SPRITE) EDITOR ────────────────────────────┐
+│ Pixel art editor with animation capabilities        │
+│                                                     │
+│ Role: Developer                                     │
+│                                                     │
+│ Description:                                        │
+│ Developed a pixel art editor with features for      │
+│ creating, editing, and animating sprite graphics.   │
+│ Designed user-friendly interfaces with Qt, which    │
+│ includes tools for pixel-by-pixel editing,          │
+│ frame-by-frame animation, dynamic size adjustment,  │
+│ and saving and loading capabilities.                │
+│                                                     │
+│ Key Features:                                       │
+│ • Pixel-by-pixel editing                            │
+│ • Frame-by-frame animation                          │
+│ • Dynamic canvas updates                            │
+│ • Custom drawing algorithm                          │
+│ • Save/load functionality                           │
+│                                                     │
+│ Tech Stack:                                         │
+│ • C++ • Qt                                          │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 7'] = () => [
+  { type: 'output', content: `
+┌─ ECOMMERCE BUSINESS ────────────────────────────────┐
+│ Ecommerce store with data-driven product and        │
+│ marketing strategy                                  │
+│                                                     │
+│ Role: Founder and Operator                          │
+│                                                     │
+│ Description:                                        │
+│ Founded and managed an online ecommerce store to    │
+│ gain hands-on experience in business operations,    │
+│ product management, and digital marketing.          │
+│ Conducted market research to identify profitable    │
+│ product niches and optimize pricing strategies      │
+│ based on competitor analysis.                       │
+│                                                     │
+│ Key Achievements:                                   │
+│ • Generated over $2,000 in first year               │
+│ • Data-driven decision making                       │
+│ • Market research and analysis                      │
+│ • Sustained profitability strategies                │
+│                                                     │
+│ Business Skills:                                    │
+│ • Product Management • Marketing                    │
+│ • Business Strategy • Data Analysis                 │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 8'] = () => [
+  { type: 'output', content: `
+┌─ SPREADSHEET APPLICATION (EXCEL CLONE) ─────────────┐
+│ Functional spreadsheet with formula evaluation      │
+│                                                     │
+│ Role: Developer                                     │
+│                                                     │
+│ Description:                                        │
+│ Built a fully functional spreadsheet application    │
+│ similar to Microsoft Excel. Implemented core        │
+│ features including cell editing, formula            │
+│ evaluation, and dynamic recalculation. Created a    │
+│ custom expression parser for mathematical           │
+│ operations and cell references.                     │
+│                                                     │
+│ Key Features:                                       │
+│ • Formula evaluation engine                         │
+│ • Cell reference system                             │
+│ • Dynamic recalculation                             │
+│ • Mathematical operations                           │
+│ • Grid-based interface                              │
+│                                                     │
+│ Tech Stack:                                         │
+│ • C# • .NET • Data Structures • Algorithms          │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 9'] = () => [
+  { type: 'output', content: `
+┌─ WEB SCRAPER ───────────────────────────────────────┐
+│ Python Web Scraper for static HTML sites            │
+│                                                     │
+│ Role: Developer                                     │
+│                                                     │
+│ Description:                                        │
+│ Developed a Python-based web scraping tool to       │
+│ extract data from static HTML websites. The         │
+│ scraper efficiently parses HTML content, extracts   │
+│ relevant information, and exports data in           │
+│ structured formats.                                 │
+│                                                     │
+│ Key Features:                                       │
+│ • HTML parsing and data extraction                  │
+│ • Structured data export (CSV/JSON)                 │
+│ • Error handling and recovery                       │
+│                                                     │
+│ Tech Stack:                                         │
+│ • Python • BeautifulSoup • Requests                 │
+│ • Data Processing                                   │
+└─────────────────────────────────────────────────────┘` }
+];
+
+commands['project 10'] = () => [
+  { type: 'output', content: `
+┌─ ASP.NET CORE WEATHER FORECAST API ─────────────────┐
+│ RESTful API with Entity Framework                   │
+│                                                     │
+│ Role: Developer                                     │
+│                                                     │
+│ Description:                                        │
+│ Built a comprehensive web API for weather           │
+│ forecasting using ASP.NET Core. The API provides   │
+│ RESTful endpoints for CRUD operations, leveraging  │
+│ Entity Framework Core for database interactions.    │
+│ Implemented authentication, data validation, and    │
+│ comprehensive API documentation with Swagger.       │
+│                                                     │
+│ Key Features:                                       │
+│ • RESTful API design                                │
+│ • Entity Framework integration                      │
+│ • CRUD operations                                   │
+│ • Swagger documentation                             │
+│ • Data validation and error handling                │
+│                                                     │
+│ Tech Stack:                                         │
+│ • C# • ASP.NET Core • Entity Framework              │
+│ • REST API • Swagger                                │
+└─────────────────────────────────────────────────────┘` }
+];
 
   const handleCommand = (cmd) => {
     const trimmedCmd = cmd.trim();
@@ -377,9 +788,7 @@ ${project.demoLink ? `│ Demo: ${project.demoLink}\n│` : '│'}
       
       // Handle clear command specially
       if (result[0]?.type === 'clear') {
-        setHistory([
-          { type: 'output', content: 'Terminal cleared.\n' }
-        ]);
+        setHistory([]);
       } else {
         setHistory([...newHistory, ...result]);
       }
@@ -466,7 +875,11 @@ ${project.demoLink ? `│ Demo: ${project.demoLink}\n│` : '│'}
               {item.type === 'command' && (
                 <span className="prompt">ryan@portfolio:~$ </span>
               )}
-              <span className="content">{item.content}</span>
+              {item.type === 'output' ? (
+                <span className="content" dangerouslySetInnerHTML={{ __html: item.content }} />
+              ) : (
+                <span className="content">{item.content}</span>
+              )}
             </div>
           ))}
           

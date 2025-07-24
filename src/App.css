@@ -234,24 +234,31 @@ body {
   50%, 100% { opacity: 0; }
 }
 
-/* Scrollbar styling for terminal history */
-.terminal-history::-webkit-scrollbar {
-  width: 10px;
+/* Scrollbar styling for terminal body */
+.terminal-body::-webkit-scrollbar {
+  width: 8px;
 }
 
-.terminal-history::-webkit-scrollbar-track {
-  background: #0a0a0a;
-  border-radius: 5px;
+.terminal-body::-webkit-scrollbar-track {
+  background: rgba(0, 255, 0, 0.05);
+  border-radius: 4px;
 }
 
-.terminal-history::-webkit-scrollbar-thumb {
-  background: #00ff00;
-  border-radius: 5px;
+.terminal-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 0, 0.2);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 0, 0.3);
   box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
 
-.terminal-history::-webkit-scrollbar-thumb:hover {
-  background: #00cc00;
+/* Firefox scrollbar */
+.terminal-body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 0, 0.2) rgba(0, 255, 0, 0.05);
 }
 
 /* Matrix mode effect */
@@ -371,4 +378,18 @@ body {
 .terminal-line.success .content {
   color: #50fa7b;
   text-shadow: 0 0 5px rgba(80, 250, 123, 0.5);
+}
+
+/* Link styling in terminal output */
+.terminal-line.output a {
+  color: #00ff00;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: all 0.2s ease;
+}
+
+.terminal-line.output a:hover {
+  color: #50ff50;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+  text-decoration-style: wavy;
 }
