@@ -52,7 +52,7 @@ const HomePage = () => {
         experience     - Show work/education timeline
         exp &lt;num&gt;      - View specific experience details
         contact        - Get in touch
-        resume         - Download my resume
+        resume         - View my resume
         clear          - Clear terminal
         matrix         - Toggle matrix rain effect
         pwd            - Show current directory
