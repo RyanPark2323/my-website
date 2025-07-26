@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { projectsData } from '../data/projectsData';
+import { projectsData } from '../data/projectsdata';
 import { timelineData } from '../data/timelineData';
 
 const HomePage = () => {
