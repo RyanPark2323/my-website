@@ -188,19 +188,15 @@ const HomePage = () => {
     ],
 
     resume: () => {
-      // Create a temporary link element to trigger download
       const link = document.createElement('a');
-      link.href = '/assets/Ryan_Park_Resume.pdf';
+      link.href = `${process.env.PUBLIC_URL}/assets/Ryan_Park_Resume.pdf`;
       link.download = 'Ryan_Park_Resume.pdf';
       link.target = '_blank';
+  
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      link.onerror = () => {
-      console.error('Resume file not found');
-      };
-      
+  
       return [
         { type: 'output', content: 'Downloading resume...' },
         { type: 'output', content: 'Resume download started. Check your downloads folder.' }
