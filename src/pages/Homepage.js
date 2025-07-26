@@ -188,18 +188,12 @@ const HomePage = () => {
     ],
 
     resume: () => {
-      const link = document.createElement('a');
-      link.href = `${process.env.PUBLIC_URL}/assets/Ryan_Park_Resume.pdf`;
-      link.download = 'Ryan_Park_Resume.pdf';
-      link.target = '_blank';
-  
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Opens the PDF in a new tab for viewing (not downloading)
+      window.open(`${process.env.PUBLIC_URL}/assets/Ryan_Park_Resume.pdf`, '_blank');
   
       return [
-        { type: 'output', content: 'Downloading resume...' },
-        { type: 'output', content: 'Resume download started. Check your downloads folder.' }
+        { type: 'output', content: 'Opening resume in new tab...' },
+        { type: 'output', content: 'Resume opened for viewing.' }
       ];
     },
 
