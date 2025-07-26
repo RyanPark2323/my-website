@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { projectsData } from '../data/projectsdata';
-import { timelineData } from '../data/timelineData';
+// import { timelineData } from '../data/timelineData';
 
 const HomePage = () => {
   const [input, setInput] = useState('');
