@@ -191,7 +191,7 @@ const HomePage = () => {
       // Create a temporary link element to trigger download
       const link = document.createElement('a');
       link.href = '/assets/Ryan Park - Resume.pdf';
-      link.download = 'Ryan_Park_Resume.pdf';
+      link.download = 'Ryan Park - Resume.pdf';
       link.target = '_blank';
       document.body.appendChild(link);
       link.click();
