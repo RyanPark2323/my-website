@@ -48,16 +48,16 @@ const HomePage = () => {
         about          - Learn about me
         skills         - View my technical skills
         projects       - Browse my projects
-        project <num>  - View specific project details
+        project &lt;num&gt;  - View specific project details
         experience     - Show work/education timeline
-        exp <num>      - View specific experience details
+        exp &lt;num&gt;      - View specific experience details
         contact        - Get in touch
         resume         - Download my resume
         clear          - Clear terminal
         matrix         - Toggle matrix rain effect
         pwd            - Show current directory
         date           - Display current date/time
-        echo <text>    - Echo text back
+        echo &lt;text&gt;    - Echo text back
 
         Use help and clear to navigate, even if used already` 
       }
