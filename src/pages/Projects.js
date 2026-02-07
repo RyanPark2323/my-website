@@ -2,6 +2,7 @@ import React from 'react';
 import { projectsData } from '../data/projectsdata';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import SpotlightCard from '../components/SpotlightCard';
 
 const Projects = () => {
   return (
@@ -14,16 +15,16 @@ const Projects = () => {
         </Link>
       </nav>
 
-      <header className="max-w-6xl mx-auto mb-16">
+      <header className="max-w-6xl mx-auto mb-16 fade-in-up">
         <h1 className="text-5xl md:text-7xl font-serif text-slate-100 mb-6">Selected Works</h1>
         <p className="text-xl text-slate-400 max-w-2xl font-light">
             A collection of technical projects exploring system architecture, cloud infrastructure, and automation.
         </p>
       </header>
 
-      <main className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+      <main className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 fade-in-up delay-200">
         {projectsData.map((project, index) => (
-          <article key={index} className="group bg-white/5 border border-white/10 p-8 rounded-lg hover:border-gold/30 transition-all duration-300 hover:shadow-lg hover:shadow-gold/5 flex flex-col h-full">
+          <SpotlightCard key={index} className="group p-8 flex flex-col h-full">
             <h2 className="text-3xl font-serif text-slate-100 mb-3 group-hover:text-gold transition-colors">
               {project.title}
             </h2>
@@ -38,7 +39,7 @@ const Projects = () => {
                     View Project
                 </a>
             )}
-          </article>
+          </SpotlightCard>
         ))}
       </main>
     </div>

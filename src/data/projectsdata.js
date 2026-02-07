@@ -1,13 +1,13 @@
 export const projectsData = [
   {
     title: "Gifthint",
-    category: "Mobile Application",
+    category: "Freelance Product",
     description: "A React Native social platform simplifying gift-giving through curated wishlists. Handled full-stack freelance development including Firebase auth and database modeling.",
     link: "#"
   },
   {
     title: "Memewear Creations",
-    category: "E-Commerce Business",
+    category: "Founder",
     description: "Founded and scaled a profitable D2C clothing brand. Managed supply chain, digital marketing strategies, and pricing models generating $2k+ revenue.",
     link: "#"
   },

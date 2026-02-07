@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { timelineData } from '../data/timelineData';
 import { Link } from 'react-router-dom';
 import { Linkedin } from 'lucide-react';
 
 const SectionHeader = ({ number, title }) => (
-  <div className="flex items-center gap-4 mb-12">
+  <div className="flex items-center gap-4 mb-12 fade-in-up">
     <span className="font-mono text-gold text-lg">{number}</span>
     <h2 className="text-3xl font-serif font-semibold text-slate-100 tracking-tight">{title}</h2>
     <div className="h-px bg-slate-800 flex-grow max-w-xs ml-4"></div>
@@ -12,11 +12,26 @@ const SectionHeader = ({ number, title }) => (
 );
 
 function Homepage() {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    window.location.href = `mailto:ryan.park2322@gmail.com?subject=Contact from ${formData.name}&body=${formData.message}`;
+  };
+
   return (
-    <div className="min-h-screen bg-onyx text-slate-300 font-sans selection:bg-gold selection:text-onyx">
+    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans selection:bg-gold selection:text-onyx overflow-x-hidden relative">
+
+      {/* Background with breathing animation */}
+      <div className="fixed inset-0 pointer-events-none z-0 breathing-bg bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950"></div>
 
       {/* Navigation */}
-      <nav className="fixed w-full top-0 z-50 backdrop-blur-md bg-onyx/80 border-b border-white/5">
+      <nav className="fixed w-full top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-white/5">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="font-serif font-bold text-xl tracking-tighter text-white hover:text-gold transition-colors">RP.</Link>
           <div className="flex gap-8 text-sm font-medium text-slate-400 items-center">
@@ -27,10 +42,10 @@ function Homepage() {
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto px-6 pt-32 md:pt-48">
+      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-32 md:pt-48">
 
       {/* Hero */}
-      <header className="mb-32 text-center md:text-left">
+      <header className="mb-32 text-center md:text-left fade-in-up">
         <h1 className="text-6xl md:text-9xl font-serif font-bold text-slate-100 tracking-tight mb-6">
           Ryan Park.
         </h1>
@@ -50,15 +65,15 @@ function Homepage() {
 
 
         {/* Experience */}
-        <section id="experience" className="py-24">
+        <section id="experience" className="py-24 fade-in-up delay-200">
           <SectionHeader number="01." title="Professional Experience" />
-          <div className="space-y-12">
+          <div className="space-y-8">
             {timelineData.map((job, index) => (
-              <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8 group">
-                <div className="md:col-span-1">
-                  <p className="font-mono text-sm text-slate-500 pt-1">{job.date}</p>
+              <div key={index} className="group grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4 md:gap-8 p-6 rounded-lg transition-colors hover:bg-white/5">
+                <div className="md:text-right">
+                  <p className="font-mono text-xs text-slate-500 pt-2 group-hover:text-gold/70 transition-colors">{job.date}</p>
                 </div>
-                <div className="md:col-span-3">
+                <div>
                   <h3 className="text-2xl font-serif font-semibold text-slate-100 mb-1 group-hover:text-gold transition-colors">
                     {job.role}
                   </h3>
@@ -71,7 +86,7 @@ function Homepage() {
                   {job.tags && (
                     <div className="flex flex-wrap gap-2">
                       {job.tags.map(tag => (
-                        <span key={tag} className="text-xs font-mono text-slate-500 border border-slate-800 px-2 py-1 rounded">
+                        <span key={tag} className="text-xs font-mono text-slate-500 border border-slate-800 px-2 py-1 rounded group-hover:border-slate-700 transition-colors">
                           {tag}
                         </span>
                       ))}
@@ -84,7 +99,7 @@ function Homepage() {
         </section>
 
         {/* Footer */}
-        <footer className="py-24 border-t border-white/5 mt-12">
+        <footer className="py-24 border-t border-white/5 mt-12 fade-in-up delay-300">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
 
             {/* Left Column */}
@@ -100,37 +115,43 @@ function Homepage() {
             </div>
 
             {/* Right Column (Form) */}
-            <form className="space-y-8">
-              <div>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="group">
                 <label htmlFor="name" className="sr-only">Name</label>
                 <input
                   type="text"
                   id="name"
                   name="name"
                   placeholder="Name"
-                  className="w-full bg-transparent border-b border-slate-700 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-colors"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full bg-transparent border-b border-white/20 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-all duration-300"
                   required
                 />
               </div>
-              <div>
+              <div className="group">
                 <label htmlFor="email" className="sr-only">Email</label>
                 <input
                   type="email"
                   id="email"
                   name="email"
                   placeholder="Email"
-                  className="w-full bg-transparent border-b border-slate-700 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-colors"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full bg-transparent border-b border-white/20 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-all duration-300"
                   required
                 />
               </div>
-              <div>
+              <div className="group">
                 <label htmlFor="message" className="sr-only">Message</label>
                 <textarea
                   id="message"
                   name="message"
                   rows="4"
                   placeholder="Message"
-                  className="w-full bg-transparent border-b border-slate-700 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-colors resize-none"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  className="w-full bg-transparent border-b border-white/20 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-all duration-300 resize-none"
                   required
                 ></textarea>
               </div>
