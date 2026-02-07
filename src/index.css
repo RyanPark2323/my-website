@@ -1,3 +1,9 @@
+body {
+  background-color: #020617; /* matches bg-slate-950 */
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
