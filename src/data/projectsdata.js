@@ -1,20 +1,32 @@
 export const projectsData = [
   {
+    title: "Gifthint",
+    category: "Mobile Application",
+    description: "A React Native social platform simplifying gift-giving through curated wishlists. Handled full-stack freelance development including Firebase auth and database modeling.",
+    link: "#"
+  },
+  {
+    title: "Memewear Creations",
+    category: "E-Commerce Business",
+    description: "Founded and scaled a profitable D2C clothing brand. Managed supply chain, digital marketing strategies, and pricing models generating $2k+ revenue.",
+    link: "#"
+  },
+  {
     title: "Excel Clone",
-    subtitle: "C# / .NET / Dependency Graphs",
-    description: "A high-performance spreadsheet application featuring dynamic cell recalculation, formula evaluation, and circular dependency detection.",
+    category: "Software Engineering",
+    description: "High-performance spreadsheet engine built in C#. Features directed acyclic graph (DAG) dependency tracking for instant cell recalculation.",
     link: "#"
   },
   {
     title: "Weather Forecast API",
-    subtitle: "ASP.NET Core / Azure",
-    description: "A scalable REST API for weather data. Features CRUD operations, Swagger documentation for endpoint testing, and cloud deployment via Azure.",
+    category: "Cloud Infrastructure",
+    description: "Scalable ASP.NET Core REST API deployed on Azure. Implemented secure CRUD operations and Swagger documentation.",
     link: "#"
   },
   {
-    title: "Job Listing Scraper",
-    subtitle: "Python / BeautifulSoup",
-    description: "An automated bot that extracts and filters job listings from static HTML sites, streamlining the application process by aggregating relevant roles.",
+    title: "Job Scraper",
+    category: "Automation Script",
+    description: "Python automation bot utilizing BeautifulSoup to aggregate and filter niche job listings from static HTML sources.",
     link: "#"
   }
 ];

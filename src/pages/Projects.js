@@ -28,7 +28,7 @@ const Projects = () => {
               {project.title}
             </h2>
             <p className="font-mono text-xs text-gold mb-6 uppercase tracking-wider">
-              {project.subtitle}
+              {project.category}
             </p>
             <p className="text-slate-300 leading-relaxed mb-8 flex-grow">
               {project.description}
