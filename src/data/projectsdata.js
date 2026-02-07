@@ -1,52 +1,20 @@
 export const projectsData = [
   {
-    id: 1,
-    title: "Gifthint",
-    brief: "ML Gift Recommendation App",
+    title: "Excel Clone",
+    subtitle: "C# / .NET / Dependency Graphs",
+    description: "A high-performance spreadsheet application featuring dynamic cell recalculation, formula evaluation, and circular dependency detection.",
+    link: "#"
   },
   {
-    id: 2,
-    title: "A Breath of Fresh Air Hackathon",
-    brief: "AI managed cap and trade system",
+    title: "Weather Forecast API",
+    subtitle: "ASP.NET Core / Azure",
+    description: "A scalable REST API for weather data. Features CRUD operations, Swagger documentation for endpoint testing, and cloud deployment via Azure.",
+    link: "#"
   },
   {
-    id: 3,
-    title: "Personal Website",
-    brief: "What do you think of it so far?",
-  },
-  {
-    id: 4,
-    title: "Capture the Flag Challenges",
-    brief: "Cybersecurity challenges to obtain flag from systems or code",
-  },
-  {
-    id: 5,
-    title: "Educational Golf Simulator",
-    brief: "Physics-based golf simulator to teach course strategy",
-  },
-  {
-    id: 6,
-    title: "Piskel (Sprite) Editor",
-    brief: "Pixel art editor with animation capabilities",
-  },
-  {
-    id: 7,
-    title: "Ecommerce Business",
-    brief: "Ecommerce store with data-driven product and marketing strategy",
-  },
-  {
-    id: 8,
-    title: "Spreadsheet Application (Excel Clone)",
-    brief: "Functional spreadsheet with formula evaluation",
-  },
-  {
-    id: 9,
-    title: "Web Scraper",
-    brief: "Python Web Scraper for static HTML sites",
-  },
-  {
-    id: 10,
-    title: "ASP.NET Core Weather Forecast API",
-    brief: "RESTful API with Entity Framework",
+    title: "Job Listing Scraper",
+    subtitle: "Python / BeautifulSoup",
+    description: "An automated bot that extracts and filters job listings from static HTML sites, streamlining the application process by aggregating relevant roles.",
+    link: "#"
   }
 ];
