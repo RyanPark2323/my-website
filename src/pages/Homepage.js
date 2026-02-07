@@ -52,51 +52,100 @@ function Homepage() {
         {/* Experience */}
         <section id="experience" className="py-24">
           <SectionHeader number="01." title="Professional Experience" />
-          <div className="border-l-2 border-slate-800 ml-3 md:ml-6 space-y-12 pl-8 md:pl-12 relative">
+          <div className="space-y-12">
             {timelineData.map((job, index) => (
-              <div key={index} className="relative group">
-                <div className="absolute -left-[41px] md:-left-[59px] top-1 h-5 w-5 rounded-full border-2 border-gold bg-onyx group-hover:bg-gold transition-colors"></div>
-                <h3 className="text-2xl font-serif font-bold text-slate-100">
-                  {job.title} <span className="text-gold">@ {job.subtitle}</span>
-                </h3>
-                <p className="font-mono text-sm text-slate-500 mb-4 mt-1">{job.date}</p>
-                <p className="text-slate-400 max-w-2xl leading-relaxed mb-4">
-                  {job.description}
-                </p>
-                {job.tags && (
-                  <div className="flex flex-wrap gap-3">
-                    {job.tags.map(tag => (
-                      <span key={tag} className="text-xs font-mono text-amber-200 bg-gold/10 px-3 py-1 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
+              <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8 group">
+                <div className="md:col-span-1">
+                  <p className="font-mono text-sm text-slate-500 pt-1">{job.date}</p>
+                </div>
+                <div className="md:col-span-3">
+                  <h3 className="text-2xl font-serif font-semibold text-slate-100 mb-1 group-hover:text-gold transition-colors">
+                    {job.role}
+                  </h3>
+                  <p className="text-sm font-sans uppercase tracking-wider text-gold mb-3">
+                    {job.company}
+                  </p>
+                  <p className="text-slate-400 leading-relaxed mb-4">
+                    {job.description}
+                  </p>
+                  {job.tags && (
+                    <div className="flex flex-wrap gap-2">
+                      {job.tags.map(tag => (
+                        <span key={tag} className="text-xs font-mono text-slate-500 border border-slate-800 px-2 py-1 rounded">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="py-24 text-center border-t border-white/5 mt-12 flex flex-col items-center">
-          <h2 className="text-4xl font-serif font-bold text-slate-100 mb-6">Let's Connect</h2>
-          <p className="text-slate-400 max-w-lg mx-auto mb-10">
-            I am currently looking for new opportunities in Software Engineering and AI for Spring 2026.
-          </p>
+        <footer className="py-24 border-t border-white/5 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-20">
-             <a href="mailto:ryan.park2322@gmail.com" className="inline-block px-8 py-4 border border-gold text-gold font-medium rounded hover:bg-gold/10 transition-colors">
-                Say Hello
-            </a>
-             <a href="https://www.linkedin.com/in/ryan-park23" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-gold transition-colors p-4">
-                <Linkedin className="w-8 h-8" />
-                <span className="sr-only">LinkedIn</span>
-            </a>
+            {/* Left Column */}
+            <div className="flex flex-col justify-start">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-100 mb-6">Let's Connect.</h2>
+              <p className="text-slate-400 max-w-md leading-relaxed mb-8">
+                I am currently looking for new opportunities in Software Engineering and AI for Spring 2026.
+              </p>
+              <a href="https://www.linkedin.com/in/ryan-park23" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-gold hover:text-white transition-colors font-medium w-fit">
+                <Linkedin className="w-5 h-5" />
+                <span>Connect on LinkedIn</span>
+              </a>
+            </div>
+
+            {/* Right Column (Form) */}
+            <form className="space-y-8">
+              <div>
+                <label htmlFor="name" className="sr-only">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  className="w-full bg-transparent border-b border-slate-700 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-colors"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="sr-only">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full bg-transparent border-b border-slate-700 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-colors"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="message" className="sr-only">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="4"
+                  placeholder="Message"
+                  className="w-full bg-transparent border-b border-slate-700 py-3 text-slate-300 placeholder-slate-600 focus:border-gold outline-none transition-colors resize-none"
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" className="inline-block px-8 py-4 bg-slate-100 text-onyx font-medium rounded hover:bg-gold hover:text-onyx transition-colors">
+                Send Message
+              </button>
+            </form>
           </div>
 
-          <p className="font-mono text-xs text-slate-600">
-            Designed & Built by Ryan Park
-          </p>
+          <div className="mt-24 pt-8 border-t border-slate-800 text-center md:text-left">
+            <p className="font-mono text-xs text-slate-600">
+              Designed & Built by Ryan Park
+            </p>
+          </div>
         </footer>
 
       </main>
