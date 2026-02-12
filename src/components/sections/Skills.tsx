@@ -52,16 +52,11 @@ export default function Skills() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: categoryIndex * 0.1 + skillIndex * 0.05 }}
-                    className="flex items-center justify-between group"
+                    className="group"
                   >
                     <span className="text-text-secondary group-hover:text-accent-primary transition-colors">
                       {skill.name}
                     </span>
-                    {skill.proficiency && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-accent-primary/10 text-accent-primary">
-                        {skill.proficiency}
-                      </span>
-                    )}
                   </motion.div>
                 ))}
               </div>

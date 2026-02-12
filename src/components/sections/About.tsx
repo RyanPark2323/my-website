@@ -27,22 +27,22 @@ export default function About() {
           className="space-y-6 mb-12"
         >
           <p className="text-text-secondary text-lg leading-relaxed">
-            I'm a Computer Science student at the University of Utah with a specialization in Artificial Intelligence, 
-            graduating Spring 2026. Currently working as an IT Support Intern at the University's Vice President of Research office, 
-            where I focus on cybersecurity, systems administration, and infrastructure security.
-          </p>
-          
-          <p className="text-text-secondary text-lg leading-relaxed">
-            My passion lies in building intelligent, scalable applications that solve real-world problems. 
-            From leading the development of full-stack mobile apps with machine learning integration to 
-            designing cloud infrastructure for environmental policy systems, I love tackling complex challenges 
-            at the intersection of software engineering and AI.
+            I'm a Computer Science student at the University of Utah with a specialization in Artificial Intelligence,
+            graduating Spring 2026. As an IT Support Intern at the University's Vice President of Research office,
+            I manage critical IT infrastructure, focusing on systems administration, network security, and infrastructure hardening.
           </p>
 
           <p className="text-text-secondary text-lg leading-relaxed">
-            Beyond coding, I'm actively involved in cybersecurity competitions (CTF challenges), 
-            passionate about educational technology, and always exploring new frameworks and tools to 
-            expand my technical toolkit.
+            My expertise spans IT infrastructure design, cloud architecture, and AI integration.
+            I've designed scalable cloud infrastructure for enterprise applications, built secure network systems,
+            and developed AI-powered solutions that optimize infrastructure management. I thrive at the intersection
+            of infrastructure engineering and artificial intelligence.
+          </p>
+
+          <p className="text-text-secondary text-lg leading-relaxed">
+            Beyond infrastructure work, I'm actively involved in cybersecurity competitions (CTF challenges),
+            continually expanding my knowledge in network security, penetration testing, and secure infrastructure practices.
+            My Computer Science degree with AI specialization gives me a unique perspective on building intelligent, secure systems.
           </p>
         </motion.div>
 

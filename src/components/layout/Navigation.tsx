@@ -50,12 +50,6 @@ export default function Navigation() {
             Projects
           </button>
           <button
-            onClick={() => scrollToSection('skills')}
-            className="text-text-secondary hover:text-accent-primary transition-colors font-medium"
-          >
-            Skills
-          </button>
-          <button
             onClick={() => scrollToSection('about')}
             className="text-text-secondary hover:text-accent-primary transition-colors font-medium"
           >

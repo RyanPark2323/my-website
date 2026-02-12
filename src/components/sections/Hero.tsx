@@ -47,7 +47,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            Full-Stack Developer & AI Engineer
+            IT Infrastructure Engineer & AI Specialist
           </motion.h2>
 
           {/* Tagline */}
@@ -57,7 +57,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            Building intelligent applications that solve real-world problems—from mobile apps to cloud infrastructure
+            Computer Science student specializing in AI—designing secure IT infrastructure, cloud systems, and intelligent solutions
           </motion.p>
 
           {/* CTA Buttons */}

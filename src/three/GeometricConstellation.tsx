@@ -53,40 +53,47 @@ export default function GeometricConstellation() {
       <pointLight position={[10, 10, 10]} intensity={1} color="#60A5FA" />
       <pointLight position={[-10, -10, -10]} intensity={0.5} color="#8B5CF6" />
 
-      {/* Geometric shapes constellation */}
+      {/* Geometric shapes constellation - positioned to avoid center text area */}
       <FloatingShape
-        position={[-2, 1, 0]}
+        position={[-3, 1.5, 0]}
         geometry={<Sphere args={[0.5, 32, 32]} />}
         color="#60A5FA"
         speed={0.5}
       />
-      
+
       <FloatingShape
-        position={[2, -0.5, -1]}
+        position={[3, -1, -1]}
         geometry={<Octahedron args={[0.6]} />}
         color="#34D399"
         speed={0.7}
       />
-      
+
       <FloatingShape
-        position={[0, 0.5, 1]}
+        position={[-2.5, -1.5, 1]}
         geometry={<Torus args={[0.4, 0.15, 16, 32]} />}
         color="#8B5CF6"
         speed={0.6}
       />
-      
+
       <FloatingShape
-        position={[-1.5, -1, 2]}
+        position={[-3.5, -0.5, 2]}
         geometry={<Octahedron args={[0.4]} />}
         color="#60A5FA"
         speed={0.8}
       />
-      
+
       <FloatingShape
-        position={[1.5, 1.5, -2]}
+        position={[3.5, 2, -2]}
         geometry={<Sphere args={[0.3, 32, 32]} />}
         color="#34D399"
         speed={0.4}
+      />
+
+      <FloatingShape
+        position={[2.5, 0.5, 1.5]}
+        geometry={<Sphere args={[0.35, 32, 32]} />}
+        color="#8B5CF6"
+        speed={0.55}
       />
     </group>
   );
