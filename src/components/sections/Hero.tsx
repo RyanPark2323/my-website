@@ -40,16 +40,6 @@ export default function Hero() {
             <span className="text-gradient">Ryan Park</span>
           </motion.h1>
 
-          {/* Title */}
-          <motion.h2
-            className="text-2xl md:text-4xl font-semibold text-text-primary mb-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-          >
-            IT Infrastructure Engineer & AI Specialist
-          </motion.h2>
-
           {/* Tagline */}
           <motion.p
             className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-8"
@@ -57,7 +47,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            Computer Science student specializing in AI—designing secure IT infrastructure, cloud systems, and intelligent solutions
+            Computer Science student specializing in AI, designing secure IT infrastructure, cloud systems, and intelligent solutions
           </motion.p>
 
           {/* CTA Buttons */}
