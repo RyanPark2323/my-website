@@ -1,10 +1,18 @@
 import { useRef } from 'react';
+import type { ReactElement } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { MeshDistortMaterial, Sphere, Torus, Octahedron } from '@react-three/drei';
 import * as THREE from 'three';
 
+interface FloatingShapeProps {
+  position: [number, number, number];
+  geometry: ReactElement;
+  color: string;
+  speed: number;
+}
+
 // Individual floating geometric shape
-function FloatingShape({ position, geometry, color, speed }: any) {
+function FloatingShape({ position, geometry, color, speed }: FloatingShapeProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
