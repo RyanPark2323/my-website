@@ -66,3 +66,17 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* The field hint carries two verbs; at phone width it needs the short form. */
+.foyer-hint-narrow {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .foyer-hint-wide {
+    display: none;
+  }
+  .foyer-hint-narrow {
+    display: inline;
+  }
+}

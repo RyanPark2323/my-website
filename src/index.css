@@ -1,69 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/**
+ * Global ground only. The site's visual language lives in src/colony/tokens.ts
+ * and the inline styles that read from it — there is deliberately no second
+ * palette and no second type scale here.
+ *
+ * Fonts are loaded in index.html (Fraunces / Public Sans / JetBrains Mono).
+ */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  body {
-    @apply bg-bg-base text-text-primary font-sans antialiased;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #0b0c0e;
+  color: #ede8dd;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-@layer utilities {
-  .text-gradient {
-    background: linear-gradient(to right, #ffffff, #60a5fa, #a78bfa);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .text-gradient-glow {
-    @apply bg-gradient-to-r from-accent-primary to-accent-tertiary bg-clip-text text-transparent;
-    filter: drop-shadow(0 0 30px rgba(96, 165, 250, 0.6))
-            drop-shadow(0 0 60px rgba(139, 92, 246, 0.4))
-            drop-shadow(0 0 10px rgba(96, 165, 250, 0.8));
-    padding: 0.5rem 1.5rem;
-    background-color: rgba(15, 23, 42, 0.3);
-    backdrop-filter: blur(8px);
-    border-radius: 1rem;
-    box-shadow: 0 8px 32px rgba(96, 165, 250, 0.15);
-  }
-
-  .card-hover {
-    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-accent-primary/20;
-  }
-
-  .glow-effect {
-    box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
-  }
+html {
+  scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-bg-base;
+  background: #0b0c0e;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-accent-primary/30 rounded-full;
+  background: #2a2c30;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-accent-primary/50;
+  background: #3a3d42;
 }
 
-/* Selection */
-::selection {
-  @apply bg-accent-primary/30 text-text-primary;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
