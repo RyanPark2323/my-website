@@ -3,7 +3,7 @@
  *
  * This provider owns the canvas, the clock and the render. It is mounted once,
  * above everything that can change, and it is never unmounted — navigating
- * between the foyer and a realm must not destroy or restart the colony. A trail
+ * between the index and a project must not destroy or restart the colony. A trail
  * a visitor planted on the landing page is still there when they come back from
  * Contact, and it has aged in the meantime.
  *
@@ -48,6 +48,7 @@ import {
   P as ENGINE_P,
 } from './engine';
 import { warmColony } from './snapshots';
+import { BUILD_NOTES, BUILD_NOTE_MS, CLAIM_BODY } from './explain';
 import {
   ANNOTATIONS,
   ANNOTATION_GAP_MS,
@@ -154,6 +155,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const annoLayerRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLElement>(null);
+  const explainRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement | null>(null);
   const toastRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLButtonElement | null>(null);
@@ -174,6 +176,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
   const [inspection, setInspection] = useState<Inspection | null>(null);
   // On a phone the full rail would cover most of the field, so it collapses to
   // regime plus counters and the per-source rows drop away.
+  const [noteIndex, setNoteIndex] = useState(0);
   const [narrow, setNarrow] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
   );
@@ -639,6 +642,14 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const id = window.setInterval(
+      () => setNoteIndex((i) => (i + 1) % BUILD_NOTES.length),
+      BUILD_NOTE_MS
+    );
+    return () => clearInterval(id);
+  }, []);
+
   // -------------------------------------------------------------------------
   // Scroll is the only presentation driver.
   // -------------------------------------------------------------------------
@@ -655,6 +666,8 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
       const layer = annoLayerRef.current;
       const fade = ambient ? 0 : (dress - AMBIENT_THRESHOLD) / (1 - AMBIENT_THRESHOLD);
       if (layer) layer.style.opacity = String(fade);
+      const explain = explainRef.current;
+      if (explain) explain.style.opacity = String(fade);
       const rail = railRef.current;
       if (rail) {
         rail.style.opacity = String(fade);
@@ -890,6 +903,137 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
       </div>
 
       {/*
+        The live explainer. The rail on the right reports state; this says why,
+        keyed to the colony's own regime so it is never describing something
+        that is not on screen. It claims the field at the top, because without
+        that line a visitor has no way to know what they are looking at or that
+        it was built rather than borrowed.
+
+        pointerEvents stays off: the whole field must remain clickable through it.
+      */}
+      <aside
+        ref={explainRef}
+        data-colony-explain=""
+        style={{
+          position: 'fixed',
+          top: narrow ? '58px' : 'clamp(62px,9vh,86px)',
+          left: narrow ? '16px' : 'clamp(20px,5vw,64px)',
+          right: narrow ? '16px' : undefined,
+          zIndex: 4,
+          width: narrow ? 'auto' : '262px',
+          pointerEvents: 'none',
+          // A soft directional scrim rather than a frame: the rail is a framed
+          // instrument, this is commentary laid over the field. Without it the
+          // text is unreadable whenever a bright artery passes behind.
+          padding: narrow ? '14px 16px' : '16px 34px 18px 18px',
+          margin: narrow ? 0 : '-16px 0 0 -18px',
+          background: narrow
+            ? 'rgba(11,12,14,.78)'
+            : 'radial-gradient(130% 115% at 8% 18%, rgba(11,12,14,.93) 0%, rgba(11,12,14,.86) 42%, rgba(11,12,14,.55) 72%, rgba(11,12,14,0) 100%)',
+          transition: 'opacity .5s ease',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontFamily: FONT_MONO,
+            fontSize: '10px',
+            letterSpacing: '.2em',
+            color: TEAL,
+          }}
+        >
+          <span
+            style={{
+              width: '5px',
+              height: '5px',
+              borderRadius: '50%',
+              background: TEAL,
+              animation: 'pulseDot 3.4s ease-in-out infinite',
+              flex: '0 0 auto',
+            }}
+          />
+          LIVE ANT COLONY
+        </div>
+        <div
+          style={{
+            marginTop: '5px',
+            fontFamily: FONT_BODY,
+            fontSize: '12px',
+            fontWeight: 300,
+            lineHeight: 1.5,
+            color: bone(0.42),
+          }}
+        >
+          {narrow
+            ? `${panel.agents} ants. Each drops pheromone on the way back from food, and it evaporates. Every path came out of that.`
+            : CLAIM_BODY}
+        </div>
+
+        {!narrow && (
+          <>
+            <div
+              style={{
+                marginTop: '18px',
+                paddingTop: '13px',
+                borderTop: `1px solid ${HAIRLINE}`,
+                fontFamily: FONT_MONO,
+                fontSize: '9px',
+                letterSpacing: '.18em',
+                color: bone(0.3),
+              }}
+            >
+              THE MODEL
+            </div>
+            <div
+              style={{
+                marginTop: '9px',
+                fontFamily: FONT_MONO,
+                fontSize: '9.5px',
+                letterSpacing: '.16em',
+                color: TEAL,
+              }}
+            >
+              {BUILD_NOTES[noteIndex].label}
+            </div>
+            <div
+              style={{
+                marginTop: '7px',
+                fontFamily: FONT_BODY,
+                fontSize: '12.5px',
+                fontWeight: 300,
+                lineHeight: 1.62,
+                color: bone(0.56),
+                textWrap: 'pretty',
+              }}
+            >
+              {BUILD_NOTES[noteIndex].body}
+            </div>
+            <div
+              style={{
+                marginTop: '12px',
+                display: 'flex',
+                gap: '5px',
+              }}
+            >
+              {BUILD_NOTES.map((n, i) => (
+                <span
+                  key={n.label}
+                  style={{
+                    width: '14px',
+                    height: '1px',
+                    background: i === noteIndex ? TEAL : HAIRLINE,
+                    transition: 'background .4s ease',
+                  }}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </aside>
+
+      {/*
         The instrument rail. Every persistent readout lives here — regime,
         every source, the counters, and the controls — so the field stays a
         field. Top-right, diagonally opposite the headline, so the two can
@@ -897,9 +1041,10 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
       */}
       <aside
         ref={railRef}
+        data-colony-rail=""
         style={{
           position: 'fixed',
-          top: narrow ? '58px' : 'clamp(62px,9vh,86px)',
+          top: narrow ? '152px' : 'clamp(62px,9vh,86px)',
           right: narrow ? '16px' : 'clamp(20px,5vw,64px)',
           left: narrow ? '16px' : undefined,
           zIndex: 4,

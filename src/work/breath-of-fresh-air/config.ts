@@ -1,12 +1,12 @@
-import type { SimpleRealm } from '../types';
+import type { CaseStudy } from '../types';
 
-export const breathOfFreshAir: SimpleRealm = {
+export const breathOfFreshAir: CaseStudy = {
   id: 'breath-of-fresh-air',
-  kind: 'simple',
+  kind: 'case-study',
   title: 'A Breath of Fresh Air',
   tagline: 'AI-managed cap-and-trade system to reduce Utah air pollution by 1% annually',
   status: 'built',
-  order: 3,
+  order: 1,
   longDescription:
     'Developed during a hackathon, this scalable data-driven solution automates emission tracking, credit allocation, and compliance forecasting using AWS infrastructure and Python-based machine learning models. Earned Honorable Mention for innovative approach to environmental policy.',
   technologies: ['Python', 'AWS S3', 'Snowflake', 'AWS Bedrock', 'AWS SageMaker'],

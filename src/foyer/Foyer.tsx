@@ -2,32 +2,31 @@ import { useRef, useState } from 'react';
 import './foyer.css';
 import { useColony } from '../colony/colonyApi';
 import { useReveals } from './useReveals';
-import RealmTeaserCard from './components/RealmTeaserCard';
-import SimpleRealmView from '../realms/SimpleRealmView';
-import { realms, getRealm } from '../realms';
-import { toRoman } from '../lib/roman';
+import ProjectCard from './components/ProjectCard';
+import ProjectView from '../work/ProjectView';
+import { projects, getProject } from '../work';
 import { bone, HAIRLINE, FONT_MONO, FONT_DISPLAY, FONT_BODY, TEAL, TEAL_DEEP, AMBER, BONE } from '../colony/tokens';
 
-type ViewState = 'foyer' | 'realm';
+type ViewState = 'index' | 'project';
 
 export default function Foyer() {
-  const [view, setView] = useState<ViewState>('foyer');
-  const [openRealmId, setOpenRealmId] = useState<string | null>(null);
+  const [view, setView] = useState<ViewState>('index');
+  const [openProjectId, setOpenProjectId] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const { heroRef, onPointerDown, onPointerMove, onPointerLeave, cursor, footNoteRef } = useColony();
 
-  useReveals(rootRef, view + (openRealmId ?? ''));
+  useReveals(rootRef, view + (openProjectId ?? ''));
 
   function goHome() {
-    setView('foyer');
-    setOpenRealmId(null);
+    setView('index');
+    setOpenProjectId(null);
     window.scrollTo(0, 0);
   }
 
-  function enterRealm(id: string) {
-    setOpenRealmId(id);
-    setView('realm');
+  function openProject(id: string) {
+    setOpenProjectId(id);
+    setView('project');
     window.scrollTo(0, 0);
   }
 
@@ -36,11 +35,11 @@ export default function Foyer() {
     goHome();
   };
 
-  const isFoyer = view === 'foyer';
-  const isRealm = view === 'realm';
-  const openRealm = openRealmId ? getRealm(openRealmId) : undefined;
-  const builtCount = realms.filter((r) => r.status !== 'unbuilt').length;
-  const currentYear = toRoman(new Date().getFullYear());
+  const isIndex = view === 'index';
+  const isProject = view === 'project';
+  const openProjectEntry = openProjectId ? getProject(openProjectId) : undefined;
+  const builtCount = projects.filter((p) => p.status !== 'planned').length;
+  const currentYear = new Date().getFullYear();
 
   return (
     <div
@@ -65,8 +64,8 @@ export default function Foyer() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '13px' }}>
           <div style={{ width: '8px', height: '8px', border: `1px solid ${TEAL_DEEP}`, transform: 'rotate(45deg)' }} />
-          <span style={{ fontFamily: FONT_MONO, fontSize: '10.5px', letterSpacing: '.2em', color: bone(0.8) }}>
-            THE INSTRUMENT
+          <span style={{ fontFamily: FONT_MONO, fontSize: '10.5px', letterSpacing: '.24em', color: bone(0.8) }}>
+            RP
           </span>
         </div>
         <nav style={{ display: 'flex', gap: 'clamp(14px,3vw,32px)', fontFamily: FONT_MONO, fontSize: '10px', letterSpacing: '.16em' }}>
@@ -79,7 +78,7 @@ export default function Foyer() {
         </nav>
       </header>
 
-      {isFoyer && (
+      {isIndex && (
         <section
           ref={heroRef}
           onPointerDown={onPointerDown}
@@ -114,36 +113,44 @@ export default function Foyer() {
                     margin: 0,
                     fontFamily: FONT_DISPLAY,
                     fontWeight: 400,
-                    fontSize: 'clamp(25px,2.9vw,40px)',
-                    lineHeight: 1.12,
-                    letterSpacing: '-.02em',
+                    fontSize: 'clamp(34px,4.6vw,62px)',
+                    lineHeight: 1.04,
+                    letterSpacing: '-.028em',
                     color: BONE,
-                    maxWidth: '20ch',
                   }}
                 >
                   <span style={{ display: 'block', overflow: 'hidden', paddingBottom: '.06em' }}>
                     <span style={{ display: 'block', animation: 'riseIn 1s cubic-bezier(.22,.61,.36,1) .4s both' }}>
-                      Agent-based models of
-                    </span>
-                  </span>
-                  <span style={{ display: 'block', overflow: 'hidden', paddingBottom: '.06em' }}>
-                    <span style={{ display: 'block', animation: 'riseIn 1s cubic-bezier(.22,.61,.36,1) .52s both' }}>
-                      systems that{' '}
-                      <span
-                        style={{
-                          backgroundImage: `linear-gradient(${AMBER},${AMBER})`,
-                          backgroundSize: '100% 2px',
-                          backgroundPosition: '0 98%',
-                          backgroundRepeat: 'no-repeat',
-                          paddingBottom: '.05em',
-                        }}
-                      >
-                        answer back
-                      </span>
-                      .
+                      Ryan Park
                     </span>
                   </span>
                 </h1>
+                <p
+                  style={{
+                    margin: '14px 0 0',
+                    maxWidth: '44ch',
+                    fontSize: '16px',
+                    lineHeight: 1.55,
+                    fontWeight: 300,
+                    color: bone(0.58),
+                    textWrap: 'pretty',
+                    animation: 'fadeIn 1.2s ease .95s both',
+                  }}
+                >
+                  I build software for systems that are hard to{' '}
+                  <span
+                    style={{
+                      backgroundImage: `linear-gradient(${AMBER},${AMBER})`,
+                      backgroundSize: '100% 1px',
+                      backgroundPosition: '0 100%',
+                      backgroundRepeat: 'no-repeat',
+                      paddingBottom: '.06em',
+                    }}
+                  >
+                    reason about
+                  </span>
+                  .
+                </p>
               </div>
 
             </div>
@@ -162,14 +169,14 @@ export default function Foyer() {
               }}
             >
               <a href="#work" style={{ color: bone(0.5) }}>
-                &rarr; REALM I
+                &rarr; SELECTED WORK
               </a>
             </div>
           </div>
         </section>
       )}
 
-      {isFoyer && (
+      {isIndex && (
         <section
           id="work"
           style={{
@@ -199,21 +206,25 @@ export default function Foyer() {
                 transition: 'opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)',
               }}
             >
-              <span style={{ color: bone(0.32) }}>REALMS</span>
+              <span style={{ color: bone(0.32) }}>SELECTED WORK</span>
               <span style={{ color: bone(0.32) }}>
-                {String(builtCount).padStart(2, '0')} BUILT · <span style={{ color: TEAL }}>SET GROWING</span>
+                {String(builtCount).padStart(2, '0')} BUILT · <span style={{ color: TEAL }}>MORE IN PROGRESS</span>
               </span>
             </div>
 
-            {realms.map((realm) => (
-              <RealmTeaserCard key={realm.id} realm={realm} onEnter={() => enterRealm(realm.id)} />
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} onEnter={() => openProject(project.id)} />
             ))}
           </div>
         </section>
       )}
 
-      {isRealm && openRealm && openRealm.kind === 'simulation' && <openRealm.component onBack={goHome} />}
-      {isRealm && openRealm && openRealm.kind === 'simple' && <SimpleRealmView realm={openRealm} onBack={goHome} />}
+      {isProject && openProjectEntry?.kind === 'case-study' && openProjectEntry.component && (
+        <openProjectEntry.component onBack={goHome} />
+      )}
+      {isProject && openProjectEntry?.kind === 'case-study' && !openProjectEntry.component && (
+        <ProjectView project={openProjectEntry} onBack={goHome} />
+      )}
 
       <footer
         id="contact"
@@ -251,7 +262,7 @@ export default function Foyer() {
               color: bone(0.2),
             }}
           >
-            <span>THE INSTRUMENT · {currentYear}</span>
+            <span>RYAN PARK · {currentYear}</span>
             <span ref={footNoteRef}>AMBIENT ENGINE: ANT COLONY · CLIENT-SIDE</span>
           </div>
         </div>

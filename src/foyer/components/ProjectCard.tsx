@@ -1,22 +1,21 @@
-import { toRoman } from '../../lib/roman';
-import type { Realm } from '../../realms/types';
+import type { Project } from '../../work/types';
 import PlaceholderBox from './PlaceholderBox';
 
-interface RealmTeaserCardProps {
-  realm: Realm;
+interface ProjectCardProps {
+  project: Project;
   onEnter: () => void;
 }
 
-const statusLabel: Record<Realm['status'], string> = {
+const statusLabel: Record<Project['status'], string> = {
   'in-progress': 'IN PROGRESS',
   built: 'BUILT',
-  unbuilt: 'UNBUILT · OPENS WHEN IT RUNS',
+  planned: 'WRITE-UP IN PROGRESS',
 };
 
-export default function RealmTeaserCard({ realm, onEnter }: RealmTeaserCardProps) {
-  const realmLabel = `REALM ${toRoman(realm.order)}`;
+export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
+  const projectLabel = String(project.order).padStart(2, '0');
 
-  if (realm.kind === 'unbuilt') {
+  if (project.kind === 'planned') {
     return (
       <div
         data-reveal="1"
@@ -32,27 +31,27 @@ export default function RealmTeaserCard({ realm, onEnter }: RealmTeaserCardProps
           fontFamily: "'JetBrains Mono',monospace",
           fontSize: '10.5px',
           letterSpacing: '.16em',
-          color: 'rgba(237,232,221,.26)',
+          color: 'rgba(237,232,221,.34)',
           opacity: 0,
           transform: 'translateY(16px)',
           transition: 'opacity .9s cubic-bezier(.22,.61,.36,1) .1s,transform .9s cubic-bezier(.22,.61,.36,1) .1s',
         }}
       >
-        <span>{realmLabel}</span>
-        <span>{realm.tagline}</span>
+        <span style={{ display: 'inline-flex', gap: '16px', alignItems: 'baseline' }}>
+          <span>{projectLabel}</span>
+          <span style={{ color: 'rgba(237,232,221,.5)' }}>{project.title}</span>
+        </span>
+        <span>{project.tagline}</span>
       </div>
     );
   }
 
-  const stats =
-    realm.kind === 'simulation'
-      ? realm.stats
-      : [
-          { label: 'STACK', value: realm.technologies.join(' · ') },
-          { label: 'HIGHLIGHT', value: realm.highlights[0] },
-        ];
+  const stats = [
+    { label: 'STACK', value: project.technologies.join(' · ') },
+    { label: 'HIGHLIGHT', value: project.highlights[0] },
+  ];
 
-  const ctaLabel = realm.kind === 'simulation' ? `Enter ${realmLabel}` : `View ${realmLabel}`;
+  const ctaLabel = 'View project';
 
   return (
     <article
@@ -69,7 +68,7 @@ export default function RealmTeaserCard({ realm, onEnter }: RealmTeaserCardProps
         transition: 'opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)',
       }}
     >
-      <PlaceholderBox image={realm.kind === 'simple' ? realm.image : undefined} imageAlt={realm.title} />
+      <PlaceholderBox image={project.image} imageAlt={project.title} />
       <div>
         <div
           style={{
@@ -81,11 +80,11 @@ export default function RealmTeaserCard({ realm, onEnter }: RealmTeaserCardProps
             letterSpacing: '.16em',
           }}
         >
-          <span style={{ color: 'rgba(237,232,221,.3)' }}>{realmLabel}</span>
+          <span style={{ color: 'rgba(237,232,221,.3)' }}>{projectLabel}</span>
           <span style={{ flex: 1, height: '1px', background: '#2A2C30', maxWidth: '60px' }} />
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', color: '#5A9284' }}>
             <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#5A9284' }} />
-            {statusLabel[realm.status]}
+            {statusLabel[project.status]}
           </span>
         </div>
         <h2
@@ -99,7 +98,7 @@ export default function RealmTeaserCard({ realm, onEnter }: RealmTeaserCardProps
             color: '#EDE8DD',
           }}
         >
-          {realm.title}
+          {project.title}
         </h2>
         <p
           style={{
@@ -112,7 +111,7 @@ export default function RealmTeaserCard({ realm, onEnter }: RealmTeaserCardProps
             textWrap: 'pretty',
           }}
         >
-          {realm.tagline}
+          {project.tagline}
         </p>
         <div
           style={{

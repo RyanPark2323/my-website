@@ -106,6 +106,29 @@ export const P = {
 
   /** Floor on live sources. The field is never left unfindable. */
   MIN_LIVE: 5,
+
+  /**
+   * Recruitment backstop — the one deliberate exception to "no ant has a
+   * destination", and scoped as narrowly as it can be.
+   *
+   * Measured: 21% of visitor-placed sources were never found at all, because
+   * nearly the whole colony is committed to existing arteries and the outer
+   * field holds only a handful of wandering agents. Every attraction-based fix
+   * made it worse — making exploitation more rewarding pulls agents off the
+   * periphery, so the source has even fewer passers-by. Presence is the only
+   * thing that helps.
+   *
+   * So: if a source a visitor placed is still unfound after RECRUIT_AFTER_MS,
+   * the single nearest free agent sets off toward it. One agent in 780, only
+   * for sources a person placed, released again if it cannot get there. Ambient
+   * sources are never recruited to — the colony finds those on its own, which
+   * is the part worth watching.
+   */
+  RECRUIT_AFTER_MS: 4_000,
+  /** Give up on a recruit that cannot reach it, and pick another. */
+  RECRUIT_TIMEOUT_MS: 11_000,
+  /** How hard a recruited agent steers. Low enough that it still walks. */
+  RECRUIT_TURN: 0.3,
   /** Reseed placement, screen units from the nest. */
   RESEED_MIN: 0.18,
   RESEED_SPAN: 0.24,
@@ -139,6 +162,11 @@ export interface Ant {
   h: number;
   carrying: 0 | 1;
   load: number;
+  /**
+   * Where this agent is headed, when it has been recruited to an unfound
+   * visitor source. Null for every agent almost all of the time.
+   */
+  recruit: { x: number; y: number; untilMs: number } | null;
 }
 
 export interface Source {
@@ -457,7 +485,7 @@ export function spawnAnts(c: Colony): void {
     const d = 0.002 + c.rng() * 0.012;
     const x = c.nest.x + Math.cos(a) * d;
     const y = c.nest.y + Math.sin(a) * d;
-    c.ants.push({ x, y, px: x, py: y, h: a, carrying: 0, load: 1 });
+    c.ants.push({ x, y, px: x, py: y, h: a, carrying: 0, load: 1, recruit: null });
   }
 }
 
@@ -482,6 +510,7 @@ export function scatterAnts(c: Colony): void {
       h: c.rng() * Math.PI * 2,
       carrying: c.rng() < 0.26 ? 1 : 0,
       load: 0.6 + c.rng() * 0.4,
+      recruit: null,
     });
   }
 }
@@ -493,7 +522,7 @@ export function setAgentCount(c: Colony, n: number): void {
       const a = c.rng() * Math.PI * 2;
       const x = c.nest.x + Math.cos(a) * 0.01;
       const y = c.nest.y + Math.sin(a) * 0.01;
-      c.ants.push({ x, y, px: x, py: y, h: a, carrying: 0, load: 1 });
+      c.ants.push({ x, y, px: x, py: y, h: a, carrying: 0, load: 1, recruit: null });
     }
   } else if (c.ants.length > n) {
     c.ants.length = n;
@@ -575,7 +604,7 @@ export function antAt(c: Colony, x: number, y: number, radiusScreen = 0.014): An
 // ---------------------------------------------------------------------------
 
 export function stepColony(c: Colony, dtMs: number): void {
-  const { SPEED, SENSE, SENSE_ANGLE, TURN, NOISE, DEPOSIT, NEST_HIT, NEST_PULL, NEST_TAPER, OUTBOUND, RESPONSE, SRC_SMELL, DEPLETE_PER_PICKUP } = P;
+  const { SPEED, SENSE, SENSE_ANGLE, TURN, NOISE, DEPOSIT, NEST_HIT, NEST_PULL, NEST_TAPER, OUTBOUND, RESPONSE, SRC_SMELL, DEPLETE_PER_PICKUP, RECRUIT_TURN } = P;
   const [sx, sy] = scales(c);
   const G = c.G;
   const field = c.field;
@@ -595,6 +624,13 @@ export function stepColony(c: Colony, dtMs: number): void {
       const want = screenAngle(c, nest.x - a.x, nest.y - a.y);
       a.h += wrapAngle(want - a.h) * 0.3;
       a.h += (c.rng() - 0.5) * NOISE * 0.55;
+    } else if (a.recruit) {
+      // Recruited: walking a bearing, the same way a homeward agent does.
+      // It still has to get there — obstacles, walls and noise all apply.
+      const want = screenAngle(c, a.recruit.x - a.x, a.recruit.y - a.y);
+      a.h += wrapAngle(want - a.h) * RECRUIT_TURN;
+      a.h += (c.rng() - 0.5) * NOISE * 0.5;
+      if (c.simMs > a.recruit.untilMs) a.recruit = null;
     } else {
       // Searching: three probes, climb the gradient, stay noisy enough to
       // wander, miss and fail.
@@ -646,6 +682,7 @@ export function stepColony(c: Colony, dtMs: number): void {
           a.h += Math.PI;
           a.load = 1;
           src.supply -= DEPLETE_PER_PICKUP;
+          a.recruit = null;
           if (!src.found) {
             src.found = true;
             // Found with nothing leading here: a wanderer did this.
@@ -836,9 +873,55 @@ function world(c: Colony): void {
 
   while (c.sources.length < P.MIN_LIVE) reseed(c);
 
+  recruit(c);
+
   if (c.simMs >= c.nextEventMs) {
     disturb(c);
     scheduleNextEvent(c);
+  }
+}
+
+/**
+ * The backstop. See P.RECRUIT_* for why this exists and why it is this narrow.
+ *
+ * At most one agent is under way per unfound visitor source, it is the nearest
+ * free one so the detour is short, and it is released the moment the source is
+ * found — by it or by anyone else.
+ */
+function recruit(c: Colony): void {
+  for (const s of c.sources) {
+    if (s.found || !s.visitor) continue;
+    if (c.simMs - s.bornMs < P.RECRUIT_AFTER_MS) continue;
+    // Already has someone on the way?
+    let taken = false;
+    for (const a of c.ants) {
+      if (a.recruit && a.recruit.x === s.x && a.recruit.y === s.y) {
+        taken = true;
+        break;
+      }
+    }
+    if (taken) continue;
+
+    let best: Ant | null = null;
+    let bestD = Infinity;
+    for (const a of c.ants) {
+      if (a.carrying || a.recruit) continue;
+      const d2 = screenDist2(c, a.x - s.x, a.y - s.y);
+      if (d2 < bestD) {
+        bestD = d2;
+        best = a;
+      }
+    }
+    if (best) best.recruit = { x: s.x, y: s.y, untilMs: c.simMs + P.RECRUIT_TIMEOUT_MS };
+  }
+
+  // Release anyone still walking toward a source that no longer needs them.
+  for (const a of c.ants) {
+    if (!a.recruit) continue;
+    const target = c.sources.find(
+      (s) => s.x === a.recruit!.x && s.y === a.recruit!.y && !s.found && s.visitor
+    );
+    if (!target) a.recruit = null;
   }
 }
 

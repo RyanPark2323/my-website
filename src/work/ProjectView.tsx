@@ -1,19 +1,18 @@
-import { toRoman } from '../lib/roman';
 import PlaceholderBox from '../foyer/components/PlaceholderBox';
-import type { SimpleRealm } from './types';
+import type { CaseStudy } from './types';
 
-interface SimpleRealmViewProps {
-  realm: SimpleRealm;
+interface ProjectViewProps {
+  project: CaseStudy;
   onBack: () => void;
 }
 
 /**
- * Generic case-study template shared by every `kind: 'simple'` realm — image
- * (or placeholder), long description, highlights and stack. Built once,
- * reused for all of them; adding another simple realm needs no new view.
+ * The shared case-study template: image (or placeholder), long description,
+ * highlights and stack. Built once and reused, so adding a project needs no
+ * new view unless it wants a bespoke interactive one.
  */
-export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps) {
-  const realmLabel = `REALM ${toRoman(realm.order)}`;
+export default function ProjectView({ project, onBack }: ProjectViewProps) {
+  const projectLabel = String(project.order).padStart(2, '0');
 
   const handleBack = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,7 +44,7 @@ export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps)
             color: 'rgba(237,232,221,.45)',
           }}
         >
-          ← THE FOYER
+          &larr; ALL WORK
         </a>
 
         <div
@@ -71,11 +70,11 @@ export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps)
                 letterSpacing: '.16em',
               }}
             >
-              <span style={{ color: 'rgba(237,232,221,.3)' }}>{realmLabel}</span>
+              <span style={{ color: 'rgba(237,232,221,.3)' }}>{projectLabel}</span>
               <span style={{ width: '44px', height: '1px', background: '#2A2C30' }} />
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', color: '#5A9284' }}>
                 <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#5A9284' }} />
-                BUILT
+                {project.status === 'in-progress' ? 'IN PROGRESS' : 'BUILT'}
               </span>
             </div>
             <h2
@@ -89,7 +88,7 @@ export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps)
                 color: '#EDE8DD',
               }}
             >
-              {realm.title}
+              {project.title}
             </h2>
           </div>
           <p
@@ -103,7 +102,7 @@ export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps)
               textWrap: 'pretty',
             }}
           >
-            {realm.tagline}
+            {project.tagline}
           </p>
         </div>
 
@@ -124,10 +123,10 @@ export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps)
             }}
           >
             <span>CASE STUDY</span>
-            <span style={{ color: 'rgba(237,232,221,.4)' }}>{realm.technologies.join(' · ')}</span>
+            <span style={{ color: 'rgba(237,232,221,.4)' }}>{project.technologies.join(' · ')}</span>
           </div>
           <div style={{ padding: 'clamp(16px,2.5vw,24px)' }}>
-            <PlaceholderBox image={realm.image} imageAlt={realm.title} label="MODEL CANVAS · 1600×1000" />
+            <PlaceholderBox image={project.image} imageAlt={project.title} label="MODEL CANVAS · 1600×1000" />
             <p
               style={{
                 margin: '20px 0 0',
@@ -138,7 +137,7 @@ export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps)
                 textWrap: 'pretty',
               }}
             >
-              {realm.longDescription}
+              {project.longDescription}
             </p>
           </div>
         </div>
@@ -165,7 +164,7 @@ export default function SimpleRealmView({ realm, onBack }: SimpleRealmViewProps)
               HIGHLIGHTS
             </div>
           </div>
-          {realm.highlights.map((h) => (
+          {project.highlights.map((h) => (
             <div key={h} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
               <span style={{ width: '5px', height: '5px', marginTop: '7px', flexShrink: 0, background: '#5A9284' }} />
               <p

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "snapshots": "node --experimental-strip-types scripts/gen-snapshots.mjs"
+    "snapshots": "node --experimental-strip-types scripts/gen-snapshots.mjs",
+    "bench:discovery": "node --experimental-strip-types scripts/bench-discovery.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

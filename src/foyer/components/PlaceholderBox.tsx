@@ -9,7 +9,7 @@ interface PlaceholderBoxProps {
  * real image later is just passing `image` — no broken <img> in the
  * meantime.
  */
-export default function PlaceholderBox({ image, imageAlt, label = 'MODEL CANVAS · 1600×1000' }: PlaceholderBoxProps) {
+export default function PlaceholderBox({ image, imageAlt, label = 'IMAGE · 1600×1000' }: PlaceholderBoxProps) {
   const boxStyle: React.CSSProperties = {
     position: 'relative',
     aspectRatio: '16/10',
@@ -42,7 +42,7 @@ export default function PlaceholderBox({ image, imageAlt, label = 'MODEL CANVAS 
       }}
     >
       <span>{label}</span>
-      <span style={{ color: 'rgba(78,133,119,.75)' }}>DROP IN</span>
+      <span style={{ color: 'rgba(78,133,119,.75)' }}>PENDING</span>
     </div>
   );
 }
