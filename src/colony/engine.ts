@@ -222,11 +222,12 @@ export interface Ghost {
 }
 
 export type ColonyEventKind =
-  | 'STIGMERGY'
+  | 'FOOD_MOVED'
+  | 'TRAIL_CUT'
+  | 'DISCOVERY'
   | 'POSITIVE_FEEDBACK'
   | 'SYMMETRY_BROKEN'
-  | 'EVAPORATION'
-  | 'EXPLORATION';
+  | 'EVAPORATION';
 
 export interface ColonyEvent {
   kind: ColonyEventKind;
@@ -255,8 +256,14 @@ export interface Colony {
   simMs: number;
   nextEventMs: number;
   lastEventKind: ColonyEventKind | null;
-  /** Sim-clock ms of the last emitted event. Drives the regime readout. */
+  /** Sim-clock ms of the last emitted event. */
   lastEventMs: number;
+  /**
+   * Sim-clock ms of the last disturbance: food moved, a trail cut, or a
+   * visitor deleting a source. Only these can make a known route stop paying,
+   * so only these drive the REROUTING regime.
+   */
+  lastDisturbanceMs: number;
   /** Mean concentration over cells carrying any trail, normalised 0..1. */
   rho: number;
   /** Fraction of the field carrying any trail at all. */
@@ -448,6 +455,7 @@ export function createColony(opts: ColonyOpts = {}): Colony {
     nextEventMs: EVENT_MIN_MS,
     lastEventKind: null,
     lastEventMs: -1e9,
+    lastDisturbanceMs: -1e9,
     rho: 0,
     occupancy: 0,
     aspect: opts.aspect ?? 16 / 9,
@@ -566,7 +574,10 @@ export function addSource(c: Colony, x: number, y: number): Source {
 
 export function removeSource(c: Colony, s: Source, reason: GhostReason = 'destroyed'): void {
   const i = c.sources.indexOf(s);
-  if (i >= 0) retireSource(c, i, reason);
+  if (i < 0) return;
+  // A visitor deleting live food cuts off whatever route led to it.
+  if (reason === 'destroyed') c.lastDisturbanceMs = c.simMs;
+  retireSource(c, i, reason);
 }
 
 function retireSource(c: Colony, i: number, reason: GhostReason): void {
@@ -686,7 +697,7 @@ export function stepColony(c: Colony, dtMs: number): void {
           if (!src.found) {
             src.found = true;
             // Found with nothing leading here: a wanderer did this.
-            if (src.rho < 0.04 && !src.visitor) emit(c, 'EXPLORATION', src.x, src.y);
+            if (src.rho < 0.04 && !src.visitor) emit(c, 'DISCOVERY', src.x, src.y);
           }
           break;
         }
@@ -961,7 +972,7 @@ function touchable(c: Colony, s: Source): boolean {
 function disturb(c: Colony): void {
   // Relocation is the richest event in the set, so it is weighted highest —
   // but never twice in quick succession.
-  const wantRelocation = c.lastEventKind !== 'STIGMERGY' ? c.rng() < 0.68 : c.rng() < 0.25;
+  const wantRelocation = c.lastEventKind !== 'FOOD_MOVED' ? c.rng() < 0.68 : c.rng() < 0.25;
   if (wantRelocation && relocate(c)) return;
   if (sever(c)) return;
   relocate(c);
@@ -1004,7 +1015,8 @@ function relocate(c: Colony): boolean {
     moved.relocatedMs = c.simMs;
     c.sources.push(moved);
     // The trail to the old place is still there, still being walked.
-    emit(c, 'STIGMERGY', s.x, s.y);
+    c.lastDisturbanceMs = c.simMs;
+    emit(c, 'FOOD_MOVED', s.x, s.y);
     return true;
   }
   return false;
@@ -1049,7 +1061,8 @@ function sever(c: Colony): boolean {
       }
     }
     if (wiped < 6) continue;
-    emit(c, 'EXPLORATION', cx, cy);
+    c.lastDisturbanceMs = c.simMs;
+    emit(c, 'TRAIL_CUT', cx, cy);
     return true;
   }
   return false;
@@ -1073,11 +1086,11 @@ export function drainEvents(c: Colony): ColonyEvent[] {
 // Source labels
 // ---------------------------------------------------------------------------
 
-export type SourceLabelState = 'FOUND' | 'UNFOUND' | 'DEPLETING' | 'RELOCATED' | 'GONE';
+export type SourceLabelState = 'FOUND' | 'UNFOUND' | 'LOW' | 'RELOCATED' | 'GONE';
 
 export function sourceLabel(c: Colony, s: Source): SourceLabelState {
   if (s.relocatedMs >= 0 && c.simMs - s.relocatedMs < RELOCATED_LABEL_MS) return 'RELOCATED';
-  if (s.supply < 0.45) return 'DEPLETING';
+  if (s.supply < 0.45) return 'LOW';
   if (!s.found) return 'UNFOUND';
   return 'FOUND';
 }
@@ -1097,7 +1110,7 @@ export function labelTargets(c: Colony, max = 3): LabelTarget[] {
   c.sources.forEach((s, i) => {
     const state = sourceLabel(c, s);
     const weight =
-      state === 'RELOCATED' ? 100 : state === 'DEPLETING' ? 60 : state === 'UNFOUND' ? 40 : s.rho * 10;
+      state === 'RELOCATED' ? 100 : state === 'LOW' ? 60 : state === 'UNFOUND' ? 40 : s.rho * 10;
     out.push({ x: s.x, y: s.y, index: i + 1, state, weight });
   });
   c.ghosts.forEach((g) => {

@@ -21,12 +21,33 @@ body {
   color: #ede8dd;
 }
 
-.foyer-cta:hover {
+/* Colours for these live here rather than inline: an inline colour outranks
+   any :hover rule, which had left every one of them without a hover state. */
+.foyer a.foyer-cta {
+  background: #b8874f;
+  color: #0b0c0e;
+}
+
+.foyer a.foyer-cta:hover {
   background: #c9975c;
   color: #0b0c0e;
 }
 
-.foyer-back:hover {
+.foyer a.foyer-back {
+  color: rgba(237, 232, 221, 0.55);
+}
+
+.foyer a.foyer-back:hover {
+  color: #ede8dd;
+}
+
+/* Nav and quiet in-page links. The colour lives here, not inline, so that
+   hover can still brighten them. */
+.foyer a.foyer-quiet-link {
+  color: rgba(237, 232, 221, 0.55);
+}
+
+.foyer a.foyer-quiet-link:hover {
   color: #ede8dd;
 }
 
@@ -78,5 +99,42 @@ body {
   }
   .foyer-hint-narrow {
     display: inline;
+  }
+}
+
+/*
+ * Project cards. The grid lives here rather than inline so it can collapse:
+ * inline styles would beat the media query.
+ *
+ * The card stacks image over text below 900px, wider than the site's 720px
+ * mobile breakpoint, because at tablet widths the two-column card leaves the
+ * stat values a column too narrow to read. The stat rows themselves stack
+ * label over value only at the real mobile breakpoint.
+ */
+.foyer-card {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 58px);
+}
+
+.foyer-card-stat {
+  grid-template-columns: minmax(0, 110px) minmax(0, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .foyer-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+}
+
+@media (max-width: 720px) {
+  .foyer-card {
+    gap: 22px;
+  }
+
+  .foyer-card-stat {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
   }
 }

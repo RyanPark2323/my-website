@@ -30,6 +30,11 @@ export interface CaseStudy extends ProjectCommon {
   /** The case-study body, one entry per paragraph. */
   longDescription: string[];
   highlights: string[];
+  /**
+   * The highlight shown on the index card, when the first highlight is too
+   * long for the card's mono stat row. Omitted, the card uses highlights[0].
+   */
+  cardHighlight?: string;
   technologies: string[];
   /**
    * A bespoke interactive view, for work that is better shown running than

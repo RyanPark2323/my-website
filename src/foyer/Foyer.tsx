@@ -71,10 +71,10 @@ export default function Foyer() {
           </span>
         </div>
         <nav style={{ display: 'flex', gap: 'clamp(14px,3vw,32px)', fontFamily: FONT_MONO, fontSize: '10px', letterSpacing: '.16em' }}>
-          <a href="#work" onClick={onWorkClick} style={{ color: bone(0.5) }}>
+          <a href="#work" onClick={onWorkClick} className="foyer-quiet-link">
             WORK
           </a>
-          <a href="#contact" style={{ color: bone(0.5) }}>
+          <a href="#contact" className="foyer-quiet-link">
             CONTACT
           </a>
         </nav>
@@ -170,7 +170,7 @@ export default function Foyer() {
                 animation: 'fadeIn 1.2s ease 1.35s both',
               }}
             >
-              <a href="#work" style={{ color: bone(0.5) }}>
+              <a href="#work" className="foyer-quiet-link">
                 &rarr; SELECTED WORK
               </a>
             </div>
@@ -208,7 +208,7 @@ export default function Foyer() {
                 transition: 'opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)',
               }}
             >
-              <span style={{ color: bone(0.32) }}>SELECTED WORK</span>
+              <span style={{ color: bone(0.55) }}>SELECTED WORK</span>
             </div>
 
             {projects.map((project) => (
@@ -237,7 +237,7 @@ export default function Foyer() {
       >
         <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: 'clamp(24px,5vw,64px)', fontFamily: FONT_MONO, fontSize: '12px' }}>
-            <span style={{ fontSize: '10px', letterSpacing: '.18em', color: bone(0.28) }}>CONTACT</span>
+            <span style={{ fontSize: '10px', letterSpacing: '.18em', color: bone(0.55) }}>CONTACT</span>
             <a href="mailto:ryan.park2322@gmail.com" style={{ color: bone(0.75) }}>
               ryan.park2322@gmail.com
             </a>
@@ -252,7 +252,7 @@ export default function Foyer() {
             >
               linkedin.com/in/ryan-park23
             </a>
-            <span style={{ fontSize: '10px', letterSpacing: '.14em', color: bone(0.24) }}>Built by Ryan Park</span>
+            <span style={{ fontSize: '10px', letterSpacing: '.14em', color: bone(0.55) }}>Built by Ryan Park</span>
           </div>
           <div
             style={{
@@ -266,7 +266,7 @@ export default function Foyer() {
               fontFamily: FONT_MONO,
               fontSize: '9.5px',
               letterSpacing: '.13em',
-              color: bone(0.2),
+              color: bone(0.55),
             }}
           >
             <span>RYAN PARK · {currentYear}</span>

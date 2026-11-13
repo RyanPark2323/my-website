@@ -25,7 +25,7 @@ export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
           fontFamily: "'JetBrains Mono',monospace",
           fontSize: '10.5px',
           letterSpacing: '.16em',
-          color: 'rgba(237,232,221,.34)',
+          color: 'rgba(237,232,221,.55)',
           opacity: 0,
           transform: 'translateY(16px)',
           transition: 'opacity .9s cubic-bezier(.22,.61,.36,1) .1s,transform .9s cubic-bezier(.22,.61,.36,1) .1s',
@@ -42,7 +42,7 @@ export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
 
   const stats = [
     { label: 'STACK', value: project.technologies.join(' · ') },
-    { label: 'HIGHLIGHT', value: project.highlights[0] },
+    { label: 'HIGHLIGHT', value: project.cardHighlight ?? project.highlights[0] },
   ];
 
   const ctaLabel = 'View project';
@@ -50,10 +50,9 @@ export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
   return (
     <article
       data-reveal="1"
+      className="foyer-card"
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(0,1.05fr) minmax(0,1fr)',
-        gap: 'clamp(24px,4vw,58px)',
         alignItems: 'center',
         padding: 'clamp(30px,5vh,54px) 0',
         borderBottom: '1px solid #2A2C30',
@@ -101,15 +100,14 @@ export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
           {stats.map((s) => (
             <div
               key={s.label}
+              className="foyer-card-stat"
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'minmax(0,110px) minmax(0,1fr)',
-                gap: '14px',
                 padding: '11px 0',
                 borderBottom: '1px solid #2A2C30',
               }}
             >
-              <span style={{ color: 'rgba(237,232,221,.28)', letterSpacing: '.13em' }}>{s.label}</span>
+              <span style={{ color: 'rgba(237,232,221,.55)', letterSpacing: '.13em' }}>{s.label}</span>
               <span style={{ color: 'rgba(237,232,221,.72)' }}>{s.value}</span>
             </div>
           ))}
@@ -126,8 +124,6 @@ export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
             alignItems: 'center',
             gap: '11px',
             marginTop: '26px',
-            background: '#B8874F',
-            color: '#0B0C0E',
             fontSize: '13px',
             fontWeight: 500,
             padding: '13px 22px',

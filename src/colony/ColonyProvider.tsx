@@ -48,7 +48,7 @@ import {
   P as ENGINE_P,
 } from './engine';
 import { warmColony } from './snapshots';
-import { BUILD_NOTES, BUILD_NOTE_MS, CLAIM_BODY } from './explain';
+import { BUILD_NOTES, CLAIM_BODY, noteDurationMs } from './explain';
 import {
   ANNOTATIONS,
   ANNOTATION_GAP_MS,
@@ -173,6 +173,8 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
   const heroRef = useRef<HTMLElement | null>(null);
   const toastRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLButtonElement | null>(null);
+  /** The note controls: the one part of the explainer that takes the pointer. */
+  const notesNavRef = useRef<HTMLDivElement | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
   const [cursor, setCursor] = useState<'crosshair' | 'pointer'>('crosshair');
@@ -190,9 +192,16 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
   // On a phone the full rail would cover most of the field, so it collapses to
   // regime plus counters and the per-source rows drop away.
   const [noteIndex, setNoteIndex] = useState(0);
+  // Bumped when a visitor picks a note, so its timer restarts in full even if
+  // they pick the note that is already showing.
+  const [notePick, setNotePick] = useState(0);
   const [narrow, setNarrow] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
   );
+  // On a phone the rail stacks under the explainer, so its top follows the
+  // explainer's real height instead of a fixed offset that longer copy or a
+  // narrower screen would run into.
+  const [railTopNarrow, setRailTopNarrow] = useState(152);
   const L = useRef<Live>({
     colony: null,
     ctx: null,
@@ -478,7 +487,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
       rho: c.rho,
       rhoDelta: c.rho - L.rhoPrev,
       carryingFraction: carrying / Math.max(1, Math.ceil(c.ants.length / 4)),
-      msSinceEvent: c.simMs - c.lastEventMs,
+      msSinceDisturbance: c.simMs - c.lastDisturbanceMs,
     });
     L.rhoPrev = c.rho;
     L.regime = regimeNow;
@@ -653,12 +662,22 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const id = window.setInterval(
+    const explain = explainRef.current;
+    if (!narrow || !explain) return;
+    const ro = new ResizeObserver(() => {
+      setRailTopNarrow(Math.ceil(explain.offsetTop + explain.offsetHeight + 10));
+    });
+    ro.observe(explain);
+    return () => ro.disconnect();
+  }, [narrow]);
+
+  useEffect(() => {
+    const id = window.setTimeout(
       () => setNoteIndex((i) => (i + 1) % BUILD_NOTES.length),
-      BUILD_NOTE_MS
+      noteDurationMs(BUILD_NOTES[noteIndex])
     );
-    return () => clearInterval(id);
-  }, []);
+    return () => clearTimeout(id);
+  }, [noteIndex, notePick]);
 
   // -------------------------------------------------------------------------
   // Scroll is the only presentation driver.
@@ -693,6 +712,10 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
       explain.style.opacity = String(fade);
       explain.style.visibility = visibility;
     }
+    // Faded out, the note controls must not catch clicks meant for the page
+    // that has scrolled up beneath them.
+    const notesNav = notesNavRef.current;
+    if (notesNav) notesNav.style.pointerEvents = silent ? 'none' : 'auto';
     const rail = railRef.current;
     if (rail) {
       rail.style.opacity = String(fade);
@@ -715,6 +738,12 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
     window.addEventListener('scroll', applyDress, { passive: true });
     return () => window.removeEventListener('scroll', applyDress);
   }, [applyDress]);
+
+  // The note controls only exist on wide viewports, so they can mount after
+  // the last scroll. Dress them as soon as they appear.
+  useEffect(() => {
+    applyDress();
+  }, [narrow, applyDress]);
 
   /**
    * Hide every instrument layer without touching the simulation. An open
@@ -906,7 +935,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
               fontSize: '12.5px',
               fontWeight: 300,
               letterSpacing: '.01em',
-              color: `rgba(${BONE_RGB},.34)`,
+              color: `rgba(${BONE_RGB},.55)`,
             }}
           >
             {annotation?.translation ?? ''}
@@ -938,7 +967,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
                 marginTop: '6px',
                 paddingTop: '6px',
                 borderTop: '1px solid #2A2C30',
-                color: `rgba(${BONE_RGB},.26)`,
+                color: `rgba(${BONE_RGB},.55)`,
               }}
             >
               KNOWS NOTHING ELSE
@@ -1008,11 +1037,11 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
             fontSize: '12px',
             fontWeight: 300,
             lineHeight: 1.5,
-            color: bone(0.42),
+            color: bone(0.55),
           }}
         >
           {narrow
-            ? `${panel.agents} ants. Each drops pheromone on the way back from food, and it evaporates. Every path came out of that.`
+            ? `${panel.agents} ants, built from scratch. Each one leaves pheromone on the way back from food, and the others follow the smell. The trails are where that adds up.`
             : CLAIM_BODY}
         </div>
 
@@ -1026,7 +1055,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
                 fontFamily: FONT_MONO,
                 fontSize: '9px',
                 letterSpacing: '.18em',
-                color: bone(0.3),
+                color: bone(0.55),
               }}
             >
               THE MODEL
@@ -1055,23 +1084,47 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
             >
               {BUILD_NOTES[noteIndex].body}
             </div>
+            {/*
+              The progress marks double as controls. The explainer ignores the
+              pointer so the field stays clickable through it; only these
+              buttons take events back, with a hit area taller than the mark.
+            */}
             <div
+              ref={notesNavRef}
               style={{
-                marginTop: '12px',
+                marginTop: '4px',
                 display: 'flex',
-                gap: '5px',
+                gap: '3px',
               }}
             >
               {BUILD_NOTES.map((n, i) => (
-                <span
+                <button
                   key={n.label}
-                  style={{
-                    width: '14px',
-                    height: '1px',
-                    background: i === noteIndex ? TEAL : HAIRLINE,
-                    transition: 'background .4s ease',
+                  type="button"
+                  aria-label={`Show note ${i + 1} of ${BUILD_NOTES.length}: ${n.label.toLowerCase()}`}
+                  aria-current={i === noteIndex ? 'true' : undefined}
+                  onClick={() => {
+                    setNoteIndex(i);
+                    setNotePick((p) => p + 1);
                   }}
-                />
+                  style={{
+                    cursor: 'pointer',
+                    background: 'none',
+                    border: 0,
+                    padding: '8px 1px',
+                    margin: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'block',
+                      width: '14px',
+                      height: '1px',
+                      background: i === noteIndex ? TEAL : bone(0.4),
+                      transition: 'background .4s ease',
+                    }}
+                  />
+                </button>
               ))}
             </div>
           </>
@@ -1089,7 +1142,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
         data-colony-rail=""
         style={{
           position: 'fixed',
-          top: narrow ? '152px' : 'clamp(62px,9vh,86px)',
+          top: narrow ? `${railTopNarrow}px` : 'clamp(62px,9vh,86px)',
           right: narrow ? '16px' : 'clamp(20px,5vw,64px)',
           left: narrow ? '16px' : undefined,
           zIndex: 4,
@@ -1115,7 +1168,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
               fontSize: '12px',
               fontWeight: 300,
               letterSpacing: '.01em',
-              color: bone(0.36),
+              color: bone(0.55),
             }}
           >
             {REGIME_GLOSS[panel.regime]}
@@ -1137,7 +1190,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
               fontFamily: FONT_BODY,
               fontSize: '11.5px',
               fontWeight: 300,
-              color: bone(0.3),
+              color: bone(0.55),
               opacity: annotation ? 1 : 0,
               transition: 'opacity .6s ease',
               minHeight: '14px',
@@ -1166,15 +1219,15 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
                   gap: '7px',
                   padding: '5px 12px',
                   background: lit ? 'rgba(122,178,163,.08)' : 'transparent',
-                  color: lit ? bone(0.8) : bone(0.46),
+                  color: lit ? bone(0.8) : bone(0.55),
                   transition: 'background .2s ease,color .2s ease',
                 }}
               >
                 <SourceSwatch supply={s.supply} gone={s.state === 'GONE'} />
-                <span style={{ color: lit ? TEAL_LIGHT : bone(0.52) }}>
+                <span style={{ color: lit ? TEAL_LIGHT : bone(0.55) }}>
                   {String(s.index).padStart(2, '0')}
                 </span>
-                <span style={{ color: s.state === 'DEPLETING' ? TEAL : 'inherit' }}>{s.state}</span>
+                <span>{s.state}</span>
                 <span style={{ color: TEAL, opacity: 0.85 }}>{s.rho.toFixed(2)}</span>
               </div>
             );
@@ -1199,26 +1252,26 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
         <div style={{ borderTop: `1px solid ${HAIRLINE}`, padding: '9px 12px 11px' }}>
           <div
             style={{
-              color: bone(0.34),
+              color: bone(0.55),
               display: 'flex',
               justifyContent: 'space-between',
               gap: '8px',
             }}
           >
             <span>{narrow ? 'TAP FIELD' : 'CLICK FIELD'}</span>
-            <span style={{ color: bone(0.5) }}>&rarr; PLACE</span>
+            <span style={{ color: bone(0.55) }}>&rarr; PLACE</span>
           </div>
           <div
             style={{
               marginTop: '4px',
-              color: bone(0.34),
+              color: bone(0.55),
               display: 'flex',
               justifyContent: 'space-between',
               gap: '8px',
             }}
           >
             <span>{narrow ? 'TAP SOURCE' : 'CLICK SOURCE'}</span>
-            <span style={{ color: bone(0.5) }}>&rarr; REMOVE</span>
+            <span style={{ color: bone(0.55) }}>&rarr; REMOVE</span>
           </div>
           <button
             ref={hintRef}
@@ -1281,7 +1334,7 @@ function SourceSwatch({ supply, gone }: { supply: number; gone: boolean }) {
 function Readout({ k, v }: { k: string; v: string }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', lineHeight: 1.85 }}>
-      <span style={{ color: bone(0.3) }}>{k}</span>
+      <span style={{ color: bone(0.55) }}>{k}</span>
       <span style={{ color: TEAL }}>{v}</span>
     </div>
   );
@@ -1290,7 +1343,7 @@ function Readout({ k, v }: { k: string; v: string }) {
 function Row({ k, v }: { k: string; v: string }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
-      <span style={{ color: `rgba(${BONE_RGB},.3)` }}>{k}</span>
+      <span style={{ color: `rgba(${BONE_RGB},.55)` }}>{k}</span>
       <span style={{ color: TEAL }}>{v}</span>
     </div>
   );

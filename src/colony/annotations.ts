@@ -17,11 +17,12 @@ export interface Annotation {
 }
 
 export const ANNOTATIONS: Record<ColonyEventKind, Annotation> = {
-  STIGMERGY: { term: 'STIGMERGY', translation: 'the path outlives its reason' },
+  FOOD_MOVED: { term: 'FOOD MOVED', translation: "they're still walking to where it was" },
+  TRAIL_CUT: { term: 'TRAIL CUT', translation: 'the gap has to be found again' },
+  DISCOVERY: { term: 'DISCOVERY', translation: 'found by an ant following no trail' },
   POSITIVE_FEEDBACK: { term: 'POSITIVE FEEDBACK', translation: 'success reinforces itself' },
   SYMMETRY_BROKEN: { term: 'SYMMETRY BROKEN', translation: 'no decision was made' },
   EVAPORATION: { term: 'EVAPORATION', translation: 'forgetting is what frees them' },
-  EXPLORATION: { term: 'EXPLORATION', translation: 'nobody ordered this' },
 };
 
 /** Minimum quiet between annotations. Silent most of the time, never stacked. */
@@ -41,8 +42,8 @@ export const ANNOTATION_HOLD_MS = 9_500;
 export type Regime = 'CONVERGING' | 'REINFORCING' | 'REROUTING' | 'EXPLORING' | 'DECAYING';
 
 export const REGIME_GLOSS: Record<Regime, string> = {
-  CONVERGING: 'traffic is collecting onto one path',
-  REINFORCING: 'the path is carrying itself now',
+  CONVERGING: 'the trails are getting stronger',
+  REINFORCING: 'the trails are holding on their own traffic',
   REROUTING: 'the known route stopped paying',
   EXPLORING: 'no trail is worth following yet',
   DECAYING: 'a path nobody feeds is being forgotten',
@@ -52,12 +53,15 @@ export interface RegimeInput {
   rho: number;
   rhoDelta: number;
   carryingFraction: number;
-  msSinceEvent: number;
+  /** Since the last disturbance — food moved, trail cut, or source deleted. */
+  msSinceDisturbance: number;
 }
 
 export function classifyRegime(i: RegimeInput): Regime {
-  // A disturbance just landed and the colony has not re-converged.
-  if (i.msSinceEvent < 9000 && i.rhoDelta < 0.004) return 'REROUTING';
+  // A disturbance just landed and the colony has not re-converged. Other
+  // events (a discovery, a trail strengthening) never mean a route stopped
+  // paying, so they do not count here.
+  if (i.msSinceDisturbance < 9000 && i.rhoDelta < 0.004) return 'REROUTING';
   if (i.carryingFraction < 0.08 && i.rho < 0.12) return 'EXPLORING';
   if (i.rhoDelta > 0.006) return 'CONVERGING';
   if (i.rhoDelta < -0.006) return 'DECAYING';

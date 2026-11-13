@@ -154,7 +154,7 @@ export default function PlaceholderBox({
         fontFamily: "'JetBrains Mono',monospace",
         fontSize: '9.5px',
         letterSpacing: '.16em',
-        color: 'rgba(237,232,221,.3)',
+        color: 'rgba(237,232,221,.55)',
       }}
     >
       <span>{label}</span>

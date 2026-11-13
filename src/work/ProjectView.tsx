@@ -43,7 +43,6 @@ export default function ProjectView({ project, onBack }: ProjectViewProps) {
             fontFamily: "'JetBrains Mono',monospace",
             fontSize: '10px',
             letterSpacing: '.16em',
-            color: 'rgba(237,232,221,.45)',
           }}
         >
           &larr; ALL WORK
@@ -132,7 +131,7 @@ export default function ProjectView({ project, onBack }: ProjectViewProps) {
                 fontFamily: "'JetBrains Mono',monospace",
                 fontSize: '9.5px',
                 letterSpacing: '.16em',
-                color: 'rgba(237,232,221,.28)',
+                color: 'rgba(237,232,221,.55)',
                 paddingBottom: '10px',
                 borderBottom: '1px solid #2A2C30',
               }}
@@ -165,7 +164,7 @@ export default function ProjectView({ project, onBack }: ProjectViewProps) {
               fontFamily: "'JetBrains Mono',monospace",
               fontSize: '9.5px',
               letterSpacing: '.16em',
-              color: 'rgba(237,232,221,.28)',
+              color: 'rgba(237,232,221,.55)',
               paddingBottom: '10px',
               borderBottom: '1px solid #2A2C30',
             }}

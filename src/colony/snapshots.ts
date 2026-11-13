@@ -176,6 +176,7 @@ export function warmColony(opts: ColonyOpts = {}): Colony {
   c.events.length = 0;
   c.lastEventKind = null;
   c.lastEventMs = -1e9;
+  c.lastDisturbanceMs = -1e9;
   c.nextEventMs = c.simMs + 60_000 + rng() * 60_000;
 
   return c;

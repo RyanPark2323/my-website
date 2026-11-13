@@ -44,5 +44,5 @@ export const FONT_BODY = "'Public Sans',system-ui,sans-serif";
 export const FONT_MONO = "'JetBrains Mono',monospace";
 
 /** Telemetry grammar: 10px mono, .13em tracking, dim label + teal value. */
-export const TELEMETRY_LABEL = bone(0.28);
+export const TELEMETRY_LABEL = bone(0.55);
 export const TELEMETRY_VALUE = TEAL;
