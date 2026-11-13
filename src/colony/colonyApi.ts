@@ -21,7 +21,12 @@ export interface ColonyApi {
   addSourceAtCentre: () => void;
   toastRef: RefObject<HTMLDivElement | null>;
   hintRef: RefObject<HTMLButtonElement | null>;
-  footNoteRef: RefObject<HTMLSpanElement | null>;
+  /**
+   * Hide or show every instrument layer — the rail, the explainer and the
+   * annotations — without stopping the colony. A view that is not the field
+   * calls this with true; the field is still live behind it.
+   */
+  setInstrumentsHidden: (hidden: boolean) => void;
 }
 
 const Ctx = createContext<ColonyApi | null>(null);

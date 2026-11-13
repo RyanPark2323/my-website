@@ -6,12 +6,6 @@ interface ProjectCardProps {
   onEnter: () => void;
 }
 
-const statusLabel: Record<Project['status'], string> = {
-  'in-progress': 'IN PROGRESS',
-  built: 'BUILT',
-  planned: 'WRITE-UP IN PROGRESS',
-};
-
 export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
   const projectLabel = String(project.order).padStart(2, '0');
 
@@ -70,26 +64,9 @@ export default function ProjectCard({ project, onEnter }: ProjectCardProps) {
     >
       <PlaceholderBox image={project.image} imageAlt={project.title} />
       <div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '14px',
-            fontFamily: "'JetBrains Mono',monospace",
-            fontSize: '10px',
-            letterSpacing: '.16em',
-          }}
-        >
-          <span style={{ color: 'rgba(237,232,221,.3)' }}>{projectLabel}</span>
-          <span style={{ flex: 1, height: '1px', background: '#2A2C30', maxWidth: '60px' }} />
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', color: '#5A9284' }}>
-            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#5A9284' }} />
-            {statusLabel[project.status]}
-          </span>
-        </div>
         <h2
           style={{
-            margin: '14px 0 0',
+            margin: 0,
             fontFamily: 'Fraunces,Georgia,serif',
             fontWeight: 400,
             fontSize: 'clamp(26px,3.4vw,44px)',

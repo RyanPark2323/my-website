@@ -1,44 +1,46 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import './foyer.css';
 import { useColony } from '../colony/colonyApi';
 import { useReveals } from './useReveals';
+import { useProjectRoute } from './useProjectRoute';
 import ProjectCard from './components/ProjectCard';
 import ProjectView from '../work/ProjectView';
 import { projects, getProject } from '../work';
-import { bone, HAIRLINE, FONT_MONO, FONT_DISPLAY, FONT_BODY, TEAL, TEAL_DEEP, AMBER, BONE } from '../colony/tokens';
-
-type ViewState = 'index' | 'project';
+import { bone, HAIRLINE, FONT_MONO, FONT_DISPLAY, FONT_BODY, TEAL_DEEP, AMBER, BONE } from '../colony/tokens';
 
 export default function Foyer() {
-  const [view, setView] = useState<ViewState>('index');
-  const [openProjectId, setOpenProjectId] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const { projectId, openProject, closeProject } = useProjectRoute();
 
-  const { heroRef, onPointerDown, onPointerMove, onPointerLeave, cursor, footNoteRef } = useColony();
+  const { heroRef, onPointerDown, onPointerMove, onPointerLeave, cursor, setInstrumentsHidden } = useColony();
 
-  useReveals(rootRef, view + (openProjectId ?? ''));
+  const isProject = projectId !== null;
+  const isIndex = !isProject;
 
-  function goHome() {
-    setView('index');
-    setOpenProjectId(null);
+  useReveals(rootRef, projectId ?? 'index');
+
+  // The field belongs to the index. Inside a project the colony keeps running
+  // as the background it is, but every readout and annotation comes off the
+  // screen — a case study should not be read through an instrument panel.
+  useEffect(() => {
+    setInstrumentsHidden(isProject);
+  }, [isProject, setInstrumentsHidden]);
+
+  // Owned here rather than in the route, so that arriving by Back scrolls
+  // exactly the same way as arriving by the on-page control.
+  useEffect(() => {
     window.scrollTo(0, 0);
-  }
+  }, [projectId]);
 
-  function openProject(id: string) {
-    setOpenProjectId(id);
-    setView('project');
-    window.scrollTo(0, 0);
-  }
-
-  const onHomeClick = (e: React.MouseEvent) => {
+  const onWorkClick = (e: React.MouseEvent) => {
+    // On the index the anchor already does the right thing: scroll to the work
+    // section. It only needs intercepting to leave an open project.
+    if (!isProject) return;
     e.preventDefault();
-    goHome();
+    closeProject();
   };
 
-  const isIndex = view === 'index';
-  const isProject = view === 'project';
-  const openProjectEntry = openProjectId ? getProject(openProjectId) : undefined;
-  const builtCount = projects.filter((p) => p.status !== 'planned').length;
+  const openProjectEntry = projectId ? getProject(projectId) : undefined;
   const currentYear = new Date().getFullYear();
 
   return (
@@ -69,7 +71,7 @@ export default function Foyer() {
           </span>
         </div>
         <nav style={{ display: 'flex', gap: 'clamp(14px,3vw,32px)', fontFamily: FONT_MONO, fontSize: '10px', letterSpacing: '.16em' }}>
-          <a href="#work" onClick={onHomeClick} style={{ color: bone(0.5) }}>
+          <a href="#work" onClick={onWorkClick} style={{ color: bone(0.5) }}>
             WORK
           </a>
           <a href="#contact" style={{ color: bone(0.5) }}>
@@ -137,7 +139,7 @@ export default function Foyer() {
                     animation: 'fadeIn 1.2s ease .95s both',
                   }}
                 >
-                  I build software for systems that are hard to{' '}
+                  Systems, theory, and practice. Building{' '}
                   <span
                     style={{
                       backgroundImage: `linear-gradient(${AMBER},${AMBER})`,
@@ -147,7 +149,7 @@ export default function Foyer() {
                       paddingBottom: '.06em',
                     }}
                   >
-                    reason about
+                    cool stuff
                   </span>
                   .
                 </p>
@@ -207,9 +209,6 @@ export default function Foyer() {
               }}
             >
               <span style={{ color: bone(0.32) }}>SELECTED WORK</span>
-              <span style={{ color: bone(0.32) }}>
-                {String(builtCount).padStart(2, '0')} BUILT · <span style={{ color: TEAL }}>MORE IN PROGRESS</span>
-              </span>
             </div>
 
             {projects.map((project) => (
@@ -220,10 +219,10 @@ export default function Foyer() {
       )}
 
       {isProject && openProjectEntry?.kind === 'case-study' && openProjectEntry.component && (
-        <openProjectEntry.component onBack={goHome} />
+        <openProjectEntry.component onBack={closeProject} />
       )}
       {isProject && openProjectEntry?.kind === 'case-study' && !openProjectEntry.component && (
-        <ProjectView project={openProjectEntry} onBack={goHome} />
+        <ProjectView project={openProjectEntry} onBack={closeProject} />
       )}
 
       <footer
@@ -245,6 +244,14 @@ export default function Foyer() {
             <a href="https://github.com/ryanpark2323" target="_blank" rel="noopener noreferrer" style={{ color: bone(0.75) }}>
               github.com/ryanpark2323
             </a>
+            <a
+              href="https://www.linkedin.com/in/ryan-park23"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: bone(0.75) }}
+            >
+              linkedin.com/in/ryan-park23
+            </a>
             <span style={{ fontSize: '10px', letterSpacing: '.14em', color: bone(0.24) }}>Built by Ryan Park</span>
           </div>
           <div
@@ -263,7 +270,6 @@ export default function Foyer() {
             }}
           >
             <span>RYAN PARK · {currentYear}</span>
-            <span ref={footNoteRef}>AMBIENT ENGINE: ANT COLONY · CLIENT-SIDE</span>
           </div>
         </div>
       </footer>

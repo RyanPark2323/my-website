@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import type { ImageAnnotation } from '../foyer/components/PlaceholderBox';
 
 export type ProjectStatus = 'in-progress' | 'built' | 'planned';
 
@@ -16,9 +17,18 @@ interface ProjectCommon {
 /** A finished piece of work with a case study behind it. */
 export interface CaseStudy extends ProjectCommon {
   kind: 'case-study';
-  /** Path under /public to a screenshot. Omitted projects render the placeholder box. */
+  /** Imported image asset. Omitted projects render the placeholder box. */
   image?: string;
-  longDescription: string;
+  /** Still frame shown instead of `image` under prefers-reduced-motion. */
+  imageStill?: string;
+  /** Alt text. Falls back to the title, which is rarely a good description. */
+  imageAlt?: string;
+  /** Mono readout drawn over the bottom of the image. */
+  imageCaption?: string;
+  /** A callout pointing at something inside the image. */
+  imageAnnotation?: ImageAnnotation;
+  /** The case-study body, one entry per paragraph. */
+  longDescription: string[];
   highlights: string[];
   technologies: string[];
   /**

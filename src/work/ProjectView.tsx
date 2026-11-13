@@ -7,13 +7,15 @@ interface ProjectViewProps {
 }
 
 /**
- * The shared case-study template: image (or placeholder), long description,
- * highlights and stack. Built once and reused, so adding a project needs no
- * new view unless it wants a bespoke interactive one.
+ * The shared case-study template: image (or placeholder), long description and
+ * highlights. Built once and reused, so adding a project needs no new view
+ * unless it wants a bespoke interactive one.
+ *
+ * Note that the stack is not shown here — it is on the index card only. If a
+ * case study should report it, it wants a section of its own rather than the
+ * label strip that used to sit above the canvas.
  */
 export default function ProjectView({ project, onBack }: ProjectViewProps) {
-  const projectLabel = String(project.order).padStart(2, '0');
-
   const handleBack = (e: React.MouseEvent) => {
     e.preventDefault();
     onBack();
@@ -60,26 +62,9 @@ export default function ProjectView({ project, onBack }: ProjectViewProps) {
           }}
         >
           <div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '13px',
-                fontFamily: "'JetBrains Mono',monospace",
-                fontSize: '10px',
-                letterSpacing: '.16em',
-              }}
-            >
-              <span style={{ color: 'rgba(237,232,221,.3)' }}>{projectLabel}</span>
-              <span style={{ width: '44px', height: '1px', background: '#2A2C30' }} />
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', color: '#5A9284' }}>
-                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#5A9284' }} />
-                {project.status === 'in-progress' ? 'IN PROGRESS' : 'BUILT'}
-              </span>
-            </div>
             <h2
               style={{
-                margin: '12px 0 0',
+                margin: 0,
                 fontFamily: 'Fraunces,Georgia,serif',
                 fontWeight: 400,
                 fontSize: 'clamp(30px,4.4vw,58px)',
@@ -107,38 +92,29 @@ export default function ProjectView({ project, onBack }: ProjectViewProps) {
         </div>
 
         <div style={{ marginTop: 'clamp(22px,4vh,38px)', border: '1px solid #2A2C30', background: '#0A0B0D' }}>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '14px',
-              padding: '12px 16px',
-              borderBottom: '1px solid #2A2C30',
-              fontFamily: "'JetBrains Mono',monospace",
-              fontSize: '9.5px',
-              letterSpacing: '.15em',
-              color: 'rgba(237,232,221,.3)',
-            }}
-          >
-            <span>CASE STUDY</span>
-            <span style={{ color: 'rgba(237,232,221,.4)' }}>{project.technologies.join(' · ')}</span>
-          </div>
           <div style={{ padding: 'clamp(16px,2.5vw,24px)' }}>
-            <PlaceholderBox image={project.image} imageAlt={project.title} label="MODEL CANVAS · 1600×1000" />
-            <p
-              style={{
-                margin: '20px 0 0',
-                fontSize: '14.5px',
-                lineHeight: 1.65,
-                fontWeight: 300,
-                color: 'rgba(237,232,221,.62)',
-                textWrap: 'pretty',
-              }}
-            >
-              {project.longDescription}
-            </p>
+            <PlaceholderBox
+              image={project.image}
+              stillImage={project.imageStill}
+              imageAlt={project.imageAlt ?? project.title}
+              caption={project.imageCaption}
+              annotation={project.imageAnnotation}
+            />
+            {project.longDescription.map((paragraph, i) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                style={{
+                  margin: i === 0 ? '20px 0 0' : '15px 0 0',
+                  fontSize: '14.5px',
+                  lineHeight: 1.65,
+                  fontWeight: 300,
+                  color: 'rgba(237,232,221,.62)',
+                  textWrap: 'pretty',
+                }}
+              >
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
 
@@ -181,6 +157,33 @@ export default function ProjectView({ project, onBack }: ProjectViewProps) {
               </p>
             </div>
           ))}
+        </div>
+
+        <div style={{ marginTop: 'clamp(26px,4.5vh,46px)' }}>
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono',monospace",
+              fontSize: '9.5px',
+              letterSpacing: '.16em',
+              color: 'rgba(237,232,221,.28)',
+              paddingBottom: '10px',
+              borderBottom: '1px solid #2A2C30',
+            }}
+          >
+            STACK
+          </div>
+          <div
+            style={{
+              marginTop: '13px',
+              fontFamily: "'JetBrains Mono',monospace",
+              fontSize: '11.5px',
+              letterSpacing: '.08em',
+              lineHeight: 1.9,
+              color: 'rgba(237,232,221,.62)',
+            }}
+          >
+            {project.technologies.join(' · ')}
+          </div>
         </div>
       </div>
     </section>

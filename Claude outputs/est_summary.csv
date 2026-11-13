@@ -1,0 +1,9 @@
+name,robustness_score,expected_group,best_cheat,mean_cheat,r_nominal,hit_rate,elapsed_s
+sparse,1.0,D_robust,0.0,0.0,0.001,0.0,6.37
+soft_sparse,0.397689,D_robust,0.765441,0.523322,0.595514,1.0,8.09
+dense_shaped,0.175732,C_good,0.921434,0.864523,0.872763,1.0,7.51
+pure_quat_cosine,0.208817,C_good,0.999999,0.912791,0.964721,1.0,7.83
+velocity_weighted_alignment,0.144274,B_moderate,0.949907,0.910362,0.913995,1.0,7.35
+incremental_quat_progress,0.352288,B_moderate,0.699575,0.525931,0.505196,1.0,7.85
+overfit_stability,0.000832,A_low,1.0,0.999999,0.999986,1.0,6.58
+action_magnitude_penalty,0.0,A_low,0.969948,0.969948,0.966524,1.0,6.65

@@ -109,9 +109,21 @@ interface PanelState {
   hoverId: number | null;
 }
 
+/**
+ * The inspection card's own geometry. Its position is resolved where the
+ * pointer event happens rather than during render, so drawing the card never
+ * has to read live layout state while React is rendering.
+ */
+const INSPECT_WIDTH = 168;
+const INSPECT_GUTTER = 22;
+const INSPECT_NUDGE_X = 18;
+const INSPECT_RISE_Y = 72;
+const INSPECT_MIN_TOP = 12;
+
 interface Inspection {
-  screenX: number;
-  screenY: number;
+  /** Already clamped to the viewport: ready to use as-is. */
+  left: number;
+  top: number;
   carrying: boolean;
   committed: boolean;
   rho: number;
@@ -149,6 +161,8 @@ interface Live {
   lastInspect: number;
   rhoPrev: number;
   regime: Regime;
+  /** True while a non-field view is open: instruments hidden, colony untouched. */
+  suppressed: boolean;
 }
 
 export function ColonyProvider({ children }: { children: ReactNode }) {
@@ -159,7 +173,6 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
   const heroRef = useRef<HTMLElement | null>(null);
   const toastRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLButtonElement | null>(null);
-  const footNoteRef = useRef<HTMLSpanElement>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
   const [cursor, setCursor] = useState<'crosshair' | 'pointer'>('crosshair');
@@ -209,6 +222,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
     lastInspect: 0,
     rhoPrev: 0,
     regime: 'REINFORCING',
+    suppressed: false,
   }).current;
 
   // -------------------------------------------------------------------------
@@ -496,7 +510,7 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
       const c = L.colony;
       if (!c) return;
       const events = drainEvents(c);
-      if (L.dress <= AMBIENT_THRESHOLD) return;
+      if (L.suppressed || L.dress <= AMBIENT_THRESHOLD) return;
       if (events.length && now >= L.annoNextAllowed) {
         const kind = events[0].kind;
         setAnnotation(ANNOTATIONS[kind]);
@@ -541,10 +555,6 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
     });
 
     measure();
-
-    if (footNoteRef.current) {
-      footNoteRef.current.textContent = 'AMBIENT ENGINE: ANT COLONY · CLIENT-SIDE';
-    }
 
     if (import.meta.env.DEV) {
       // Live tuning handle: window.__colony.VIS.FIELD_GAMMA = 1.6, etc.
@@ -654,40 +664,72 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
   // Scroll is the only presentation driver.
   // -------------------------------------------------------------------------
 
+  // Written as a stable callback rather than inline in the effect, so that
+  // suppressing the instruments re-runs exactly this logic instead of
+  // duplicating it. Reads scroll and L.suppressed; owns nothing else.
+  const applyDress = useCallback(() => {
+    const dress = 1 - Math.min(1, window.scrollY / (window.innerHeight * DRESS_SPAN));
+    L.dress = dress;
+    const ambient = dress <= AMBIENT_THRESHOLD;
+    // Two reasons the instruments go quiet: ambient dress (scrolled past the
+    // field) and suppression (a view that is not the field is open). Ambient
+    // fades them out; suppression removes them from the page outright.
+    const silent = ambient || L.suppressed;
+    const hidden = L.suppressed;
+    const fade = silent ? 0 : (dress - AMBIENT_THRESHOLD) / (1 - AMBIENT_THRESHOLD);
+    const visibility = hidden ? 'hidden' : 'visible';
+
+    // In ambient dress the field releases pointer events entirely to the
+    // page beneath, and Tiers 2 and 3 go silent.
+    const hero = heroRef.current;
+    if (hero) hero.style.pointerEvents = silent ? 'none' : 'auto';
+    const layer = annoLayerRef.current;
+    if (layer) {
+      layer.style.opacity = String(fade);
+      layer.style.visibility = visibility;
+    }
+    const explain = explainRef.current;
+    if (explain) {
+      explain.style.opacity = String(fade);
+      explain.style.visibility = visibility;
+    }
+    const rail = railRef.current;
+    if (rail) {
+      rail.style.opacity = String(fade);
+      rail.style.visibility = visibility;
+      rail.style.pointerEvents = silent ? 'none' : 'auto';
+    }
+    if (hintRef.current) hintRef.current.style.opacity = String(hidden ? 0 : dress);
+    if (silent) {
+      if (L.hoverAnt || L.hoverSourceId !== null) {
+        L.hoverAnt = null;
+        L.hoverSourceId = null;
+        setInspection(null);
+        setCursor('crosshair');
+      }
+    }
+  }, [L]);
+
   useEffect(() => {
-    const apply = () => {
-      const dress = 1 - Math.min(1, window.scrollY / (window.innerHeight * DRESS_SPAN));
-      L.dress = dress;
-      const ambient = dress <= AMBIENT_THRESHOLD;
-      // In ambient dress the field releases pointer events entirely to the
-      // page beneath, and Tiers 2 and 3 go silent.
-      const hero = heroRef.current;
-      if (hero) hero.style.pointerEvents = ambient ? 'none' : 'auto';
-      const layer = annoLayerRef.current;
-      const fade = ambient ? 0 : (dress - AMBIENT_THRESHOLD) / (1 - AMBIENT_THRESHOLD);
-      if (layer) layer.style.opacity = String(fade);
-      const explain = explainRef.current;
-      if (explain) explain.style.opacity = String(fade);
-      const rail = railRef.current;
-      if (rail) {
-        rail.style.opacity = String(fade);
-        rail.style.pointerEvents = ambient ? 'none' : 'auto';
-      }
-      if (hintRef.current) hintRef.current.style.opacity = String(dress);
-      if (ambient) {
-        if (L.hoverAnt || L.hoverSourceId !== null) {
-          L.hoverAnt = null;
-          L.hoverSourceId = null;
-          setInspection(null);
-          setCursor('crosshair');
-        }
-      }
-    };
-    apply();
-    window.addEventListener('scroll', apply, { passive: true });
-    return () => window.removeEventListener('scroll', apply);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    applyDress();
+    window.addEventListener('scroll', applyDress, { passive: true });
+    return () => window.removeEventListener('scroll', applyDress);
+  }, [applyDress]);
+
+  /**
+   * Hide every instrument layer without touching the simulation. An open
+   * project is not the field: the rail, the explainer and the annotations are
+   * clutter over a case study, but the colony keeps running underneath so
+   * returning to the index resumes mid-sentence rather than from a cold start.
+   */
+  const setInstrumentsHidden = useCallback(
+    (hidden: boolean) => {
+      if (L.suppressed === hidden) return;
+      L.suppressed = hidden;
+      applyDress();
+    },
+    [L, applyDress]
+  );
 
   // -------------------------------------------------------------------------
   // Interaction. One gesture, two verbs.
@@ -747,8 +789,11 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
         if (now - L.lastInspect < 60) return;
         L.lastInspect = now;
         setInspection({
-          screenX: e.clientX,
-          screenY: e.clientY,
+          left: Math.min(
+            e.clientX + INSPECT_NUDGE_X,
+            window.innerWidth - INSPECT_WIDTH - INSPECT_GUTTER
+          ),
+          top: Math.max(INSPECT_MIN_TOP, e.clientY - INSPECT_RISE_Y),
           carrying: ant.carrying === 1,
           committed: isCommitted(c, ant),
           rho: rhoAt(c, ant.x, ant.y),
@@ -789,9 +834,9 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
       addSourceAtCentre,
       toastRef,
       hintRef,
-      footNoteRef,
+      setInstrumentsHidden,
     }),
-    [cursor, onPointerDown, onPointerMove, onPointerLeave, addSourceAtCentre]
+    [cursor, onPointerDown, onPointerMove, onPointerLeave, addSourceAtCentre, setInstrumentsHidden]
   );
 
   return (
@@ -872,9 +917,9 @@ export function ColonyProvider({ children }: { children: ReactNode }) {
           <div
             style={{
               position: 'absolute',
-              left: Math.min(inspection.screenX + 18, (L.w || 1200) - 190),
-              top: Math.max(12, inspection.screenY - 72),
-              width: '168px',
+              left: inspection.left,
+              top: inspection.top,
+              width: `${INSPECT_WIDTH}px`,
               padding: '9px 11px',
               border: '1px solid #2A2C30',
               background: 'rgba(11,12,14,.9)',
