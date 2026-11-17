@@ -2,42 +2,43 @@ import { useEffect, useRef } from 'react';
 import './foyer.css';
 import { useColony } from '../colony/colonyApi';
 import { useReveals } from './useReveals';
-import { useProjectRoute } from './useProjectRoute';
+import { useRoute } from './useRoute';
 import ProjectCard from './components/ProjectCard';
 import ProjectView from '../work/ProjectView';
+import Resume from '../resume/Resume';
 import { projects, getProject } from '../work';
 import { bone, HAIRLINE, FONT_MONO, FONT_DISPLAY, FONT_BODY, TEAL_DEEP, AMBER, BONE } from '../colony/tokens';
 
 export default function Foyer() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const { projectId, openProject, closeProject } = useProjectRoute();
+  const { route, openProject, openResume, close } = useRoute();
 
   const { heroRef, onPointerDown, onPointerMove, onPointerLeave, cursor, setInstrumentsHidden } = useColony();
 
-  const isProject = projectId !== null;
-  const isIndex = !isProject;
+  const isIndex = route.kind === 'index';
+  const projectId = route.kind === 'project' ? route.id : null;
 
-  useReveals(rootRef, projectId ?? 'index');
+  useReveals(rootRef, route.kind === 'project' ? route.id : route.kind);
 
-  // The field belongs to the index. Inside a project the colony keeps running
-  // as the background it is, but every readout and annotation comes off the
-  // screen — a case study should not be read through an instrument panel.
+  // The field belongs to the index. Over any other view the colony keeps
+  // running as the background it is, but every readout and annotation comes
+  // off the screen — nothing here should be read through an instrument panel.
   useEffect(() => {
-    setInstrumentsHidden(isProject);
-  }, [isProject, setInstrumentsHidden]);
+    setInstrumentsHidden(!isIndex);
+  }, [isIndex, setInstrumentsHidden]);
 
   // Owned here rather than in the route, so that arriving by Back scrolls
-  // exactly the same way as arriving by the on-page control.
+  // exactly the same way as arriving by an on-page control.
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [projectId]);
+  }, [route]);
 
   const onWorkClick = (e: React.MouseEvent) => {
     // On the index the anchor already does the right thing: scroll to the work
-    // section. It only needs intercepting to leave an open project.
-    if (!isProject) return;
+    // section. It only needs intercepting to leave another view.
+    if (isIndex) return;
     e.preventDefault();
-    closeProject();
+    close();
   };
 
   const openProjectEntry = projectId ? getProject(projectId) : undefined;
@@ -71,10 +72,20 @@ export default function Foyer() {
           </span>
         </div>
         <nav style={{ display: 'flex', gap: 'clamp(14px,3vw,32px)', fontFamily: FONT_MONO, fontSize: '10px', letterSpacing: '.16em' }}>
-          <a href="#work" onClick={onWorkClick} className="foyer-quiet-link">
+          <a href="#work" onClick={onWorkClick} style={{ color: bone(0.5) }}>
             WORK
           </a>
-          <a href="#contact" className="foyer-quiet-link">
+          <a
+            href="?view=resume"
+            onClick={(e) => {
+              e.preventDefault();
+              openResume();
+            }}
+            style={{ color: bone(0.5) }}
+          >
+            RESUME
+          </a>
+          <a href="#contact" style={{ color: bone(0.5) }}>
             CONTACT
           </a>
         </nav>
@@ -170,7 +181,7 @@ export default function Foyer() {
                 animation: 'fadeIn 1.2s ease 1.35s both',
               }}
             >
-              <a href="#work" className="foyer-quiet-link">
+              <a href="#work" style={{ color: bone(0.5) }}>
                 &rarr; SELECTED WORK
               </a>
             </div>
@@ -208,7 +219,7 @@ export default function Foyer() {
                 transition: 'opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)',
               }}
             >
-              <span style={{ color: bone(0.55) }}>SELECTED WORK</span>
+              <span style={{ color: bone(0.32) }}>SELECTED WORK</span>
             </div>
 
             {projects.map((project) => (
@@ -218,12 +229,13 @@ export default function Foyer() {
         </section>
       )}
 
-      {isProject && openProjectEntry?.kind === 'case-study' && openProjectEntry.component && (
-        <openProjectEntry.component onBack={closeProject} />
+      {openProjectEntry?.kind === 'case-study' && openProjectEntry.component && (
+        <openProjectEntry.component onBack={close} />
       )}
-      {isProject && openProjectEntry?.kind === 'case-study' && !openProjectEntry.component && (
-        <ProjectView project={openProjectEntry} onBack={closeProject} />
+      {openProjectEntry?.kind === 'case-study' && !openProjectEntry.component && (
+        <ProjectView project={openProjectEntry} onBack={close} />
       )}
+      {route.kind === 'resume' && <Resume onBack={close} />}
 
       <footer
         id="contact"
@@ -237,7 +249,7 @@ export default function Foyer() {
       >
         <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: 'clamp(24px,5vw,64px)', fontFamily: FONT_MONO, fontSize: '12px' }}>
-            <span style={{ fontSize: '10px', letterSpacing: '.18em', color: bone(0.55) }}>CONTACT</span>
+            <span style={{ fontSize: '10px', letterSpacing: '.18em', color: bone(0.28) }}>CONTACT</span>
             <a href="mailto:ryan.park2322@gmail.com" style={{ color: bone(0.75) }}>
               ryan.park2322@gmail.com
             </a>
@@ -252,7 +264,17 @@ export default function Foyer() {
             >
               linkedin.com/in/ryan-park23
             </a>
-            <span style={{ fontSize: '10px', letterSpacing: '.14em', color: bone(0.55) }}>Built by Ryan Park</span>
+            <a
+              href="?view=resume"
+              onClick={(e) => {
+                e.preventDefault();
+                openResume();
+              }}
+              style={{ color: bone(0.75) }}
+            >
+              resume
+            </a>
+            <span style={{ fontSize: '10px', letterSpacing: '.14em', color: bone(0.24) }}>Built by Ryan Park</span>
           </div>
           <div
             style={{
@@ -266,7 +288,7 @@ export default function Foyer() {
               fontFamily: FONT_MONO,
               fontSize: '9.5px',
               letterSpacing: '.13em',
-              color: bone(0.55),
+              color: bone(0.2),
             }}
           >
             <span>RYAN PARK · {currentYear}</span>
